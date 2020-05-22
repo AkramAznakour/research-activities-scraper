@@ -78,6 +78,8 @@ const authorSearch = async ([authorName]) => {
 const getAuthorData = async ([scholarId]) => {
   const page = await setUpBrowserPage();
 
+  console.log(scholarId);
+
   await page.goto(scholarBaseUrl + "user=" + scholarId, {
     waitUntil: "load",
     timeout: 0,
@@ -155,7 +157,7 @@ const getAuthorData = async ([scholarId]) => {
 
   await browser.close();
 
-  if (author) return author;
+  if (author) return { scholarId, ...author };
   return { error: "No result" };
 };
 
@@ -174,7 +176,7 @@ const getPublicationData = async ([publicationTitle]) => {
       ...document.querySelectorAll("div.col-md-8 > div.card-body"),
     ];
 
-    if (cards.length == 0) return { message: "No result" };
+    if (cards.length == 0) return { error: "No result" };
 
     const list = [...document.querySelectorAll(".col-md-8 .col-sm-6 h6 ")];
 
