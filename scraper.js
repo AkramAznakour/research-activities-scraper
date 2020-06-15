@@ -161,26 +161,55 @@ const getAuthorData = async ([scholarId]) => {
   return { error: "No result" };
 };
 
-const getPublicationData = async ([publicationTitle]) => {
+const getPublicationData = async ([scholarId, publicationName]) => {
   const page = await setUpBrowserPage();
 
-  publicationTitle = publicationTitle.split(" ").join("+");
-
-  await page.goto(`${guideJournalURL}query?searchValue=${publicationTitle}`, {
+  await page.goto(scholarBaseUrl + "&hl=en&user=" + scholarId, {
     waitUntil: "load",
     timeout: 0,
   });
 
-  const publicationData = await page.evaluate(() => {
+  const [a] = await page.$x("//a[contains(., '" + publicationName + "')]");
+  if (a) await a.click();
+  await page.waitFor(300);
+
+  const sections = await page.evaluate(() =>
+    [...document.querySelectorAll("#gsc_ocd_bdy div.gs_scl")]
+      .map((div) => ({
+        name: div.querySelector(".gsc_vcd_field").textContent,
+        value: div.querySelector(".gsc_vcd_value").textContent,
+      }))
+      .filter(({ name }) => name == "Journal")
+  );
+
+  if (sections.length == 0) {
+    if (browser) await browser.close();
+    return { error: "No result" };
+  }
+
+  const journalName = sections[0].value;
+
+  await page.goto(`${guideJournalURL}query?searchValue=${journalName}`, {
+    waitUntil: "load",
+    timeout: 0,
+  });
+
+  const publicationData = await page.evaluate(async () => {
     const cards = [
       ...document.querySelectorAll("div.col-md-8 > div.card-body"),
     ];
 
-    if (cards.length == 0) return { error: "No result" };
+    if (cards.length == 0) {
+      await browser.close();
+      return { error: "No result" };
+    }
 
     const list = [...document.querySelectorAll(".col-md-8 .col-sm-6 h6 ")];
 
-    if (list.length == 0) return { error: "No result" };
+    if (list.length == 0) {
+      await browser.close();
+      return { error: "No result" };
+    }
 
     const arrayData = list.map((element) => {
       const data = [...element.getElementsByTagName("span")].map((span) =>
@@ -202,7 +231,7 @@ const getPublicationData = async ([publicationTitle]) => {
   return publicationData;
 };
 
-const getPublicationDetails = async ([scholarId, publicationTitle]) => {
+const getPublicationDetails = async ([scholarId, publicationName]) => {
   const page = await setUpBrowserPage({ allowScripts: true });
 
   await page.goto(scholarBaseUrl + "user=" + scholarId, {
@@ -210,7 +239,7 @@ const getPublicationDetails = async ([scholarId, publicationTitle]) => {
     timeout: 0,
   });
 
-  const [a] = await page.$x("//a[contains(., '" + publicationTitle + "')]");
+  const [a] = await page.$x("//a[contains(., '" + publicationName + "')]");
   if (a) await a.click();
   await page.waitFor(300);
 
