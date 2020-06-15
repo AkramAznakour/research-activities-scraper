@@ -72,7 +72,10 @@ const authorSearch = async ([authorName]) => {
   await browser.close();
 
   if (possibleAuthors.length > 0) return possibleAuthors;
-  return { error: "No result" };
+  return {
+    error: "No result",
+    line: 75,
+  };
 };
 
 const getAuthorData = async ([scholarId]) => {
@@ -158,7 +161,7 @@ const getAuthorData = async ([scholarId]) => {
   await browser.close();
 
   if (author) return { scholarId, ...author };
-  return { error: "No result" };
+  return { error: "No result", line: 164 };
 };
 
 const getPublicationData = async ([scholarId, publicationName]) => {
@@ -184,7 +187,7 @@ const getPublicationData = async ([scholarId, publicationName]) => {
 
   if (sections.length == 0) {
     if (browser) await browser.close();
-    return { error: "No result" };
+    return { error: "No result", line: 190 };
   }
 
   const journalName = sections[0].value;
@@ -201,14 +204,14 @@ const getPublicationData = async ([scholarId, publicationName]) => {
 
     if (cards.length == 0) {
       await browser.close();
-      return { error: "No result" };
+      return { error: "No result", line: 207 };
     }
 
     const list = [...document.querySelectorAll(".col-md-8 .col-sm-6 h6 ")];
 
     if (list.length == 0) {
       await browser.close();
-      return { error: "No result" };
+      return { error: "No result", line: 216 };
     }
 
     const arrayData = list.map((element) => {
