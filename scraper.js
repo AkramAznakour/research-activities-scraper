@@ -5,13 +5,10 @@ const guideJournalURL = "https://guidejournal.net/";
 const scholarBaseUrl = "https://scholar.google.com/citations?";
 const profilesSearchURL = scholarBaseUrl + "view_op=search_authors&mauthors=";
 
-let browser = null;
-let page = null;
-
 const setUpBrowserPage = async (config) => {
-  browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   //browser = await puppeteer.launch({ devtools: true });
-  page = await browser.newPage();
+  const page = await browser.newPage();
   await page.setRequestInterception(true);
 
   const forbiddenRequests =
@@ -39,7 +36,18 @@ const performanceWrapping = (jobFunction) => async (...args) => {
 };
 
 const authorSearch = async ([authorName]) => {
-  const page = await setUpBrowserPage();
+  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+  //browser = await puppeteer.launch({ devtools: true });
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+
+  const forbiddenRequests = ["image", "stylesheet", "font", "script", "other"];
+
+  page.on("request", (request) =>
+    forbiddenRequests.indexOf(request.resourceType()) !== -1
+      ? request.abort()
+      : request.continue()
+  );
 
   await page.goto(profilesSearchURL + authorName, {
     waitUntil: "load",
@@ -79,7 +87,18 @@ const authorSearch = async ([authorName]) => {
 };
 
 const getAuthorData = async ([scholarId]) => {
-  const page = await setUpBrowserPage();
+  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+  //browser = await puppeteer.launch({ devtools: true });
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+
+  const forbiddenRequests = ["image", "stylesheet", "font", "script", "other"];
+
+  page.on("request", (request) =>
+    forbiddenRequests.indexOf(request.resourceType()) !== -1
+      ? request.abort()
+      : request.continue()
+  );
 
   console.log(scholarId);
 
@@ -165,7 +184,17 @@ const getAuthorData = async ([scholarId]) => {
 };
 
 const getPublicationData = async ([scholarId, publicationName]) => {
-  const page = await setUpBrowserPage();
+  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+  //browser = await puppeteer.launch({ devtools: true });
+  const page = await browser.newPage();
+
+  const forbiddenRequests = ["image", "stylesheet", "font", "script", "other"];
+
+  page.on("request", (request) =>
+    forbiddenRequests.indexOf(request.resourceType()) !== -1
+      ? request.abort()
+      : request.continue()
+  );
 
   await page.goto(scholarBaseUrl + "&hl=en&user=" + scholarId, {
     waitUntil: "load",
@@ -235,7 +264,18 @@ const getPublicationData = async ([scholarId, publicationName]) => {
 };
 
 const getPublicationDetails = async ([scholarId, publicationName]) => {
-  const page = await setUpBrowserPage({ allowScripts: true });
+  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+  //browser = await puppeteer.launch({ devtools: true });
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+
+  const forbiddenRequests = ["image", "stylesheet", "font", "other"];
+
+  page.on("request", (request) =>
+    forbiddenRequests.indexOf(request.resourceType()) !== -1
+      ? request.abort()
+      : request.continue()
+  );
 
   await page.goto(scholarBaseUrl + "user=" + scholarId, {
     waitUntil: "load",
