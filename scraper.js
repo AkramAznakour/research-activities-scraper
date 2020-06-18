@@ -16,10 +16,13 @@ const performanceWrapping = (jobFunction) => async (...args) => {
 };
 
 const authorSearch = async ([authorName]) => {
+  let browser;
+  let page;
+  let responce = [];
   try {
-    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
     //browser = await puppeteer.launch({ devtools: true });
-    const page = await browser.newPage();
+    page = await browser.newPage();
     await page.setRequestInterception(true);
 
     const forbiddenRequests = [
@@ -41,7 +44,7 @@ const authorSearch = async ([authorName]) => {
       timeout: 0,
     });
 
-    const possibleAuthors = await page.evaluate(() => {
+    responce = await page.evaluate(() => {
       const possibleAuthorHtmlToObject = (possibleAuthorHtml) => {
         const profilePicture = possibleAuthorHtml.querySelector("img").src;
         const link = possibleAuthorHtml.querySelector("a").href;
@@ -67,22 +70,28 @@ const authorSearch = async ([authorName]) => {
       ];
       return possibleAuthorsHtml.map(possibleAuthorHtmlToObject);
     });
-
-    await browser.close();
-
-    if (possibleAuthors.length > 0) return possibleAuthors;
   } catch (error) {
-    console.error({ error }, "Something happened!");
-    browser.close();
-    return { error: "No result", line: 175 };
+    response = { error };
+  } finally {
+    await page.close();
+    console.log("page closed");
+    await browser.close();
+    console.log("browser closed");
   }
+
+  return responce;
 };
 
 const getAuthorData = async ([scholarId]) => {
+  console.log(scholarId);
+
+  let browser;
+  let page;
+  let responce = {};
   try {
-    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
     //browser = await puppeteer.launch({ devtools: true });
-    const page = await browser.newPage();
+    page = await browser.newPage();
     await page.setRequestInterception(true);
 
     const forbiddenRequests = [
@@ -99,8 +108,6 @@ const getAuthorData = async ([scholarId]) => {
         : request.continue()
     );
 
-    console.log(scholarId);
-
     await page.goto(scholarBaseUrl + "user=" + scholarId, {
       waitUntil: "load",
       timeout: 0,
@@ -112,7 +119,7 @@ const getAuthorData = async ([scholarId]) => {
       console.log("fetching next page");
     }
 
-    const author = await page.evaluate(() => {
+    responce = await page.evaluate(() => {
       const profilePicture = document.querySelector("#gsc_prf_w img").src;
       const bioHtml = document.getElementById("gsc_prf_i");
       const name = bioHtml.childNodes[0].textContent;
@@ -176,22 +183,29 @@ const getAuthorData = async ([scholarId]) => {
       };
     });
 
-    await browser.close();
-
-    if (author) return { scholarId, ...author };
+    responce = { scholarId, ...responce };
   } catch (error) {
-    console.error({ error }, "Something happened!");
-    browser.close();
-    return { error: "No result", line: 175 };
+    response = { error };
+  } finally {
+    await page.close();
+    console.log("page closed");
+    await browser.close();
+    console.log("browser closed");
   }
+
+  return responce;
 };
 
 const getPublicationData = async ([scholarId, publicationName]) => {
-  try {
-    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
-    //browser = await puppeteer.launch({ devtools: true });
-    const page = await browser.newPage();
+  let browser;
+  let page;
+  let response = {};
 
+  try {
+    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    //browser = await puppeteer.launch({ devtools: true });
+    page = await browser.newPage();
+    await page.setRequestInterception(true)
     const forbiddenRequests = [
       "image",
       "stylesheet",
@@ -224,10 +238,7 @@ const getPublicationData = async ([scholarId, publicationName]) => {
         .filter(({ name }) => name == "Journal")
     );
 
-    if (sections.length == 0) {
-      if (browser) await browser.close();
-      return { error: "No result", line: 190 };
-    }
+    if (sections.length == 0) throw "publication does not have a Journal";
 
     const journalName = sections[0].value;
 
@@ -236,22 +247,16 @@ const getPublicationData = async ([scholarId, publicationName]) => {
       timeout: 0,
     });
 
-    const publicationData = await page.evaluate(async () => {
+    response = await page.evaluate(async () => {
       const cards = [
         ...document.querySelectorAll("div.col-md-8 > div.card-body"),
       ];
 
-      if (cards.length == 0) {
-        await browser.close();
-        return { error: "No result", line: 235 };
-      }
+      if (cards.length == 0) throw "cards.length == 0";
 
       const list = [...document.querySelectorAll(".col-md-8 .col-sm-6 h6 ")];
 
-      if (list.length == 0) {
-        await browser.close();
-        return { error: "No result", line: 242 };
-      }
+      if (list.length == 0) throw "list.length == 0";
 
       const arrayData = list.map((element) => {
         const data = [...element.getElementsByTagName("span")].map((span) =>
@@ -260,30 +265,32 @@ const getPublicationData = async ([scholarId, publicationName]) => {
         return { [data[0]]: data[1] };
       });
 
-      const data = arrayData.reduce((accumulator, currentValue) => ({
+      return arrayData.reduce((accumulator, currentValue) => ({
         ...accumulator,
         ...currentValue,
       }));
-
-      return data;
     });
-
-    await browser.close();
-
-    return publicationData;
   } catch (error) {
-    console.error({ error }, "Something happened!");
-    browser.close();
-
-    return { error: "No result", line: 267 };
+    response = { error };
+  } finally {
+    await page.close();
+    console.log("page closed");
+    await browser.close();
+    console.log("browser closed");
   }
+
+  return response;
 };
 
 const getPublicationDetails = async ([scholarId, publicationName]) => {
+  let browser;
+  let page;
+  let response = {};
+
   try {
-    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
     //browser = await puppeteer.launch({ devtools: true });
-    const page = await browser.newPage();
+    page = await browser.newPage();
     await page.setRequestInterception(true);
 
     const forbiddenRequests = ["image", "stylesheet", "font", "other"];
@@ -310,13 +317,14 @@ const getPublicationDetails = async ([scholarId, publicationName]) => {
       }))
     );
 
-    await browser.close();
-
     return sections;
   } catch (error) {
-    console.error({ error }, "Something happened!");
-    browser.close();
-    return { error: "No result", line: 308 };
+    response = { error };
+  } finally {
+    await page.close();
+    console.log("page closed");
+    await browser.close();
+    console.log("browser closed");
   }
 };
 
