@@ -2,7 +2,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
 const cors = require("cors");
-var fs = require("fs");
 const scraper = require("./scraper");
 
 const app = express();
@@ -29,10 +28,6 @@ router.get("/author-search/:authorName", async (req, resp) => {
 router.get("/author/:scholarId", async (req, resp) => {
   const { scholarId } = req.params;
   const author = await scraper.getAuthorData(scholarId);
-  fs.writeFile(`./cache/${scholarId}.json`, JSON.stringify(author), (a) => {
-    console.log(a);
-  });
-
   resp.send(author);
 });
 
@@ -57,15 +52,5 @@ router.get(
   }
 );
 
-router.get("/fake/author/:scholarId", async (req, resp) => {
-  const { scholarId } = req.params;
-  if (fs.existsSync(`./cache/${scholarId}.json`)) {
-    const file = fs.readFileSync(`./cache/${scholarId}.json`, "utf8");
-    const author = JSON.parse(file);
-    resp.send(author);
-  } else {
-    resp.send({ error: "error" });
-  }
-});
 
 app.use("/", router);
