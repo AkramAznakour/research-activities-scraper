@@ -16,54 +16,66 @@ const performanceWrapping = (jobFunction) => async (...args) => {
 };
 
 const authorSearch = async ([authorName]) => {
-  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
-  //browser = await puppeteer.launch({ devtools: true });
-  const page = await browser.newPage();
-  await page.setRequestInterception(true);
+  try {
+    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    //browser = await puppeteer.launch({ devtools: true });
+    const page = await browser.newPage();
+    await page.setRequestInterception(true);
 
-  const forbiddenRequests = ["image", "stylesheet", "font", "script", "other"];
+    const forbiddenRequests = [
+      "image",
+      "stylesheet",
+      "font",
+      "script",
+      "other",
+    ];
 
-  page.on("request", (request) =>
-    forbiddenRequests.indexOf(request.resourceType()) !== -1
-      ? request.abort()
-      : request.continue()
-  );
+    page.on("request", (request) =>
+      forbiddenRequests.indexOf(request.resourceType()) !== -1
+        ? request.abort()
+        : request.continue()
+    );
 
-  await page.goto(profilesSearchURL + authorName, {
-    waitUntil: "load",
-    timeout: 0,
-  });
+    await page.goto(profilesSearchURL + authorName, {
+      waitUntil: "load",
+      timeout: 0,
+    });
 
-  const possibleAuthors = await page.evaluate(() => {
-    const possibleAuthorHtmlToObject = (possibleAuthorHtml) => {
-      const profilePicture = possibleAuthorHtml.querySelector("img").src;
-      const link = possibleAuthorHtml.querySelector("a").href;
-      const name = possibleAuthorHtml.querySelector("h3").textContent;
-      const interestsHtml = [...possibleAuthorHtml.querySelectorAll("div > a")];
+    const possibleAuthors = await page.evaluate(() => {
+      const possibleAuthorHtmlToObject = (possibleAuthorHtml) => {
+        const profilePicture = possibleAuthorHtml.querySelector("img").src;
+        const link = possibleAuthorHtml.querySelector("a").href;
+        const name = possibleAuthorHtml.querySelector("h3").textContent;
+        const interestsHtml = [
+          ...possibleAuthorHtml.querySelectorAll("div > a"),
+        ];
 
-      const interests = interestsHtml
-        .map((interest) => interest.textContent)
-        .filter((interest) => interest.length);
+        const interests = interestsHtml
+          .map((interest) => interest.textContent)
+          .filter((interest) => interest.length);
 
-      const scholarId = link
-        .split("&")
-        .filter((a) => a.indexOf("user=") != -1)[0]
-        .split("=")[1];
+        const scholarId = link
+          .split("&")
+          .filter((a) => a.indexOf("user=") != -1)[0]
+          .split("=")[1];
 
-      return { scholarId, name, link, profilePicture, interests };
-    };
+        return { scholarId, name, link, profilePicture, interests };
+      };
 
-    const possibleAuthorsHtml = [...document.querySelectorAll("div.gsc_1usr")];
-    return possibleAuthorsHtml.map(possibleAuthorHtmlToObject);
-  });
+      const possibleAuthorsHtml = [
+        ...document.querySelectorAll("div.gsc_1usr"),
+      ];
+      return possibleAuthorsHtml.map(possibleAuthorHtmlToObject);
+    });
 
-  await browser.close();
+    await browser.close();
 
-  if (possibleAuthors.length > 0) return possibleAuthors;
-  return {
-    error: "No result",
-    line: 65,
-  };
+    if (possibleAuthors.length > 0) return possibleAuthors;
+  } catch (error) {
+    console.error({ error }, "Something happened!");
+    browser.close();
+    return { error: "No result", line: 175 };
+  }
 };
 
 const getAuthorData = async ([scholarId]) => {
@@ -170,9 +182,8 @@ const getAuthorData = async ([scholarId]) => {
   } catch (error) {
     console.error({ error }, "Something happened!");
     browser.close();
+    return { error: "No result", line: 175 };
   }
-
-  return { error: "No result", line: 175 };
 };
 
 const getPublicationData = async ([scholarId, publicationName]) => {
