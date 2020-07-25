@@ -5,6 +5,9 @@ const guideJournalURL = "https://guidejournal.net/";
 const scholarBaseUrl = "https://scholar.google.com/citations?";
 const profilesSearchURL = scholarBaseUrl + "view_op=search_authors&mauthors=";
 
+process.setMaxListeners(0);
+
+
 const setUpBrowserPage = async (config) => {
   const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
   //browser = await puppeteer.launch({ devtools: true });
