@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors());
 
 app.listen(process.env.PORT || 2000, () => {
-console.log("Server started on port :", process.env.PORT || 2000);
+  console.log("Server started on port :", process.env.PORT || 2000);
 });
 
 const router = express.Router();
@@ -52,5 +52,23 @@ router.get(
   }
 );
 
+router.get("/check-internet", async (req, resp) => {
+  checkInternet((isConnected) => {
+    if (isConnected) {
+      console.log("connected to the internet");
+      resp.send("connected to the internet");
+    } else {
+      console.log("not connected to the internet");
+      resp.send("not connected to the internet");
+    }
+  });
+});
+
+const checkInternet = (cb) => {
+  require("dns").lookup("scholar.google.com", (err) => {
+    if (err && err.code == "ENOTFOUND") cb(false);
+    else cb(true);
+  });
+};
 
 app.use("/", router);
