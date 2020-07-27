@@ -9,7 +9,6 @@ const performanceWrapping = (jobFunction) => async (...args) => {
   const t0 = performance.now();
   const result = await jobFunction(args);
   const t1 = performance.now();
-  console.log("------------------------------------");
   console.log("calling :", jobFunction.name);
   console.log("args :", args);
   console.log("took :", parseInt(t1 - t0), "ms \n");
@@ -25,9 +24,9 @@ const performanceWrapping = (jobFunction) => async (...args) => {
 const authorSearch = async ([authorName]) => {
   let browser;
   let page;
-  let responce = [];
+
   try {
-    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -51,7 +50,7 @@ const authorSearch = async ([authorName]) => {
       timeout: 0,
     });
 
-    responce = await page.evaluate(() => {
+    const possibleAuthors = await page.evaluate(() => {
       const possibleAuthorHtmlToObject = (possibleAuthorHtml) => {
         const profilePicture = possibleAuthorHtml.querySelector("img").src;
         const link = possibleAuthorHtml.querySelector("a").href;
@@ -77,18 +76,20 @@ const authorSearch = async ([authorName]) => {
       ];
       return possibleAuthorsHtml.map(possibleAuthorHtmlToObject);
     });
+
+    if (!possibleAuthors || !possibleAuthors.length)
+      throw "Exception : No possible Authors";
+
+    return possibleAuthors;
   } catch (error) {
-    response = { error };
-    console.log(error);
-    return responce;
+    console.error(error);
+    return { error };
   } finally {
     await page.close();
-    console.log("page closed");
+    console.log("Finally : Page closed");
     await browser.close();
-    console.log("browser closed");
+    console.log("Finally : Browser closed");
   }
-
-  return responce;
 };
 
 const getAuthorData = async ([scholarId]) => {
@@ -96,9 +97,8 @@ const getAuthorData = async ([scholarId]) => {
 
   let browser;
   let page;
-  let responce;
   try {
-    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -128,7 +128,7 @@ const getAuthorData = async ([scholarId]) => {
       console.log("fetching next page");
     }
 
-    responce = await page.evaluate(() => {
+    const authorData = await page.evaluate(() => {
       const profilePicture = document.querySelector("#gsc_prf_w img").src;
       const bioHtml = document.getElementById("gsc_prf_i");
       const name = bioHtml.childNodes[0].textContent;
@@ -167,11 +167,11 @@ const getAuthorData = async ([scholarId]) => {
       );
 
       const citations = [
-        ...document.querySelectorAll("div.gsc_md_hist_b > span"),
+        ...document.querySelectorAll("div.gsc_md_hist_b > a"),
       ].map((span) => span.textContent);
 
       const citationsYears = [
-        ...document.querySelectorAll("div.gsc_md_hist_b > a"),
+        ...document.querySelectorAll("div.gsc_md_hist_b > span"),
       ].map((span) => span.textContent);
 
       const citationsPerYear = citations.map((citationsCount, index) => ({
@@ -192,28 +192,26 @@ const getAuthorData = async ([scholarId]) => {
       };
     });
 
-    responce = { scholarId, ...responce };
+    if (!authorData) throw "Exception : No author data";
+
+    return { scholarId, ...authorData };
   } catch (error) {
-    response = { error };
-    console.log(error);
-    return responce;
+    console.error(error);
+    return { error };
   } finally {
     await page.close();
-    console.log("page closed");
+    console.log("Finally : Page closed");
     await browser.close();
-    console.log("browser closed");
+    console.log("Finally : Browser closed");
   }
-
-  return responce;
 };
 
 const getPublicationData = async ([scholarId, publicationName]) => {
   let browser;
   let page;
-  let response;
 
   try {
-    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -236,7 +234,13 @@ const getPublicationData = async ([scholarId, publicationName]) => {
       timeout: 0,
     });
 
-    const [a] = await page.$x("//a[contains(., '" + publicationName + "')]");
+    const publicationNameQuery = publicationName
+      .replace("'", "@")
+      .replace('"', "@")
+      .split("@")[0];
+    const [a] = await page.$x(
+      "//a[contains(., '" + publicationNameQuery + "')]"
+    );
     if (a) await a.click();
     await page.waitFor(300);
 
@@ -249,7 +253,8 @@ const getPublicationData = async ([scholarId, publicationName]) => {
         .filter(({ name }) => name == "Journal")
     );
 
-    if (sections.length == 0) throw "publication does not have a Journal";
+    if (!sections || sections.length == 0)
+      throw "Exception : Publication does not have a Journal";
 
     const journalName = sections[0].value;
 
@@ -258,50 +263,49 @@ const getPublicationData = async ([scholarId, publicationName]) => {
       timeout: 0,
     });
 
-    response = await page.evaluate(async () => {
-      const cards = [
-        ...document.querySelectorAll("div.col-md-8 > div.card-body"),
-      ];
+    const publicationData = await page.evaluate(async () => {
+      try {
+        const list = [...document.querySelectorAll(".col-md-8 .col-sm-6 h6 ")];
 
-      if (cards.length == 0) throw "cards.length == 0";
+        if (!list || list.length == 0) throw "Exception : list.length == 0";
 
-      const list = [...document.querySelectorAll(".col-md-8 .col-sm-6 h6 ")];
+        const arrayData = list.map((element) => {
+          const data = [...element.getElementsByTagName("span")].map((span) =>
+            span.textContent.replace(":", "").trim()
+          );
+          return { [data[0]]: data[1] };
+        });
 
-      if (list.length == 0) throw "list.length == 0";
-
-      const arrayData = list.map((element) => {
-        const data = [...element.getElementsByTagName("span")].map((span) =>
-          span.textContent.replace(":", "").trim()
-        );
-        return { [data[0]]: data[1] };
-      });
-
-      return arrayData.reduce((accumulator, currentValue) => ({
-        ...accumulator,
-        ...currentValue,
-      }));
+        return arrayData.reduce((accumulator, currentValue) => ({
+          ...accumulator,
+          ...currentValue,
+        }));
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
     });
+
+    if (!publicationData) throw "Exception : No publication data ";
+
+    return publicationData;
   } catch (error) {
-    response = { error };
-    console.log(error);
-    return responce;
+    console.error(error);
+    return { error };
   } finally {
     await page.close();
-    console.log("page closed");
+    console.log("Finally : Page closed");
     await browser.close();
-    console.log("browser closed");
+    console.log("Finally : Browser closed");
   }
-
-  return response;
 };
 
 const getPublicationDetails = async ([scholarId, publicationName]) => {
   let browser;
   let page;
-  let response;
 
   try {
-    browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -330,16 +334,17 @@ const getPublicationDetails = async ([scholarId, publicationName]) => {
       }))
     );
 
+    if (!sections) throw "Exception : No sections";
+
     return sections;
   } catch (error) {
-    response = { error };
-    console.log(error);
-    return responce;
+    console.error(error);
+    return { error };
   } finally {
     await page.close();
-    console.log("page closed");
+    console.log("Finally : Page closed");
     await browser.close();
-    console.log("browser closed");
+    console.log("Finally : Browser closed");
   }
 };
 
