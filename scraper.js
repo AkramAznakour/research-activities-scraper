@@ -99,6 +99,8 @@ const authorSearch = async ([authorName]) => {
     });
   } catch (error) {
     response = { error };
+    console.log(error);
+    return responce;
   } finally {
     await page.close();
     console.log("page closed");
@@ -213,6 +215,8 @@ const getAuthorData = async ([scholarId]) => {
     responce = { scholarId, ...responce };
   } catch (error) {
     response = { error };
+    console.log(error);
+    return responce;
   } finally {
     await page.close();
     console.log("page closed");
@@ -299,6 +303,8 @@ const getPublicationData = async ([scholarId, publicationName]) => {
     });
   } catch (error) {
     response = { error };
+    console.log(error);
+    return responce;
   } finally {
     await page.close();
     console.log("page closed");
@@ -347,6 +353,8 @@ const getPublicationDetails = async ([scholarId, publicationName]) => {
     return sections;
   } catch (error) {
     response = { error };
+    console.log(error);
+    return responce;
   } finally {
     await page.close();
     console.log("page closed");
