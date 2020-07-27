@@ -5,26 +5,6 @@ const guideJournalURL = "https://guidejournal.net/";
 const scholarBaseUrl = "https://scholar.google.com/citations?";
 const profilesSearchURL = scholarBaseUrl + "view_op=search_authors&mauthors=";
 
-const setUpBrowserPage = async (config) => {
-  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
-  //browser = await puppeteer.launch({ devtools: true });
-  const page = await browser.newPage();
-  await page.setRequestInterception(true);
-
-  const forbiddenRequests =
-    config && config.allowScripts
-      ? ["image", "stylesheet", "font", "other"]
-      : ["image", "stylesheet", "font", "script", "other"];
-
-  page.on("request", (request) =>
-    forbiddenRequests.indexOf(request.resourceType()) !== -1
-      ? request.abort()
-      : request.continue()
-  );
-
-  return page;
-};
-
 const performanceWrapping = (jobFunction) => async (...args) => {
   const t0 = performance.now();
   const result = await jobFunction(args);
@@ -116,7 +96,7 @@ const getAuthorData = async ([scholarId]) => {
 
   let browser;
   let page;
-  let responce = {};
+  let responce;
   try {
     browser = await puppeteer.launch({ args: ["--no-sandbox"] });
     //browser = await puppeteer.launch({ devtools: true });
@@ -230,7 +210,7 @@ const getAuthorData = async ([scholarId]) => {
 const getPublicationData = async ([scholarId, publicationName]) => {
   let browser;
   let page;
-  let response = {};
+  let response;
 
   try {
     browser = await puppeteer.launch({ args: ["--no-sandbox"] });
@@ -318,7 +298,7 @@ const getPublicationData = async ([scholarId, publicationName]) => {
 const getPublicationDetails = async ([scholarId, publicationName]) => {
   let browser;
   let page;
-  let response = {};
+  let response;
 
   try {
     browser = await puppeteer.launch({ args: ["--no-sandbox"] });
