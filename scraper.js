@@ -9,9 +9,16 @@ const performanceWrapping = (jobFunction) => async (...args) => {
   const t0 = performance.now();
   const result = await jobFunction(args);
   const t1 = performance.now();
+  console.log("------------------------------------");
   console.log("calling :", jobFunction.name);
   console.log("args :", args);
   console.log("took :", parseInt(t1 - t0), "ms \n");
+  const used = process.memoryUsage();
+  for (let key in used)
+    console.log(
+      `Memory: ${key} ${Math.round((used[key] / 1024 / 1024) * 100) / 100} MB`
+    );
+  console.log("------------------------------------");
   return result;
 };
 
@@ -205,7 +212,7 @@ const getPublicationData = async ([scholarId, publicationName]) => {
     browser = await puppeteer.launch({ args: ["--no-sandbox"] });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
-    await page.setRequestInterception(true)
+    await page.setRequestInterception(true);
     const forbiddenRequests = [
       "image",
       "stylesheet",
