@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const { performance } = require("perf_hooks");
 
 const guideJournalURL = "https://guidejournal.net/";
-const scholarBaseUrl = "https://scholar.google.com/citations?";
+const scholarBaseUrl = "https://scholar.google.com/citations?hl=en&";
 const profilesSearchURL = scholarBaseUrl + "view_op=search_authors&mauthors=";
 
 const performanceWrapping = (jobFunction) => async (...args) => {
@@ -215,12 +215,17 @@ const getAuthorData = async ([scholarId]) => {
       await page.waitFor(300);
 
       const extraInformation = await page.evaluate(() =>
-        [...document.querySelectorAll("#gsc_ocd_bdy div.gs_scl")].map(
-          (div) => ({
-            name: div.querySelector(".gsc_vcd_field").textContent,
-            value: div.querySelector(".gsc_vcd_value").textContent,
-          })
-        )
+        [...document.querySelectorAll("#gsc_ocd_bdy div.gs_scl")]
+        .map((div) => {
+          const name = div.querySelector(".gsc_vcd_field").textContent;
+          const value = div.querySelector(".gsc_vcd_value").textContent;
+          return {
+            [name]: value,
+          };
+        }).reduce((accumulator, currentValue) => ({
+          ...accumulator,
+          ...currentValue,
+        }))
       );
 
       await page.keyboard.press("Escape");
