@@ -330,8 +330,14 @@ const getPublicationDetails = async ([scholarId, publicationName]) => {
       waitUntil: "load",
       timeout: 0,
     });
+  
+    const publicationNameQuery = publicationName
+      .replace("'", "@")
+      .replace('"', "@")
+      .split("@")[0];
+      
+    const [a] = await page.$x("//a[contains(., '" + publicationNameQuery + "')]");
 
-    const [a] = await page.$x("//a[contains(., '" + publicationName + "')]");
     if (a) await a.click();
     await page.waitFor(300);
 
