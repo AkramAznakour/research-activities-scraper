@@ -26,7 +26,9 @@ const authorSearch = async ([authorName]) => {
   let page;
 
   try {
-    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -98,7 +100,9 @@ const getAuthorData = async ([scholarId]) => {
   let browser;
   let page;
   try {
-    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -211,7 +215,9 @@ const getPublicationData = async ([scholarId, publicationName]) => {
   let page;
 
   try {
-    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -305,7 +311,9 @@ const getPublicationDetails = async ([scholarId, publicationName]) => {
   let page;
 
   try {
-    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
