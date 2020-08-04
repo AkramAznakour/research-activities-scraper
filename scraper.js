@@ -215,12 +215,17 @@ const getAuthorData = async ([scholarId]) => {
       await page.waitFor(300);
 
       const extraInformation = await page.evaluate(() =>
-        [...document.querySelectorAll("#gsc_ocd_bdy div.gs_scl")].map(
-          (div) => ({
-            name: div.querySelector(".gsc_vcd_field").textContent,
-            value: div.querySelector(".gsc_vcd_value").textContent,
-          })
-        )
+        [...document.querySelectorAll("#gsc_ocd_bdy div.gs_scl")]
+        .map((div) => {
+          const name = div.querySelector(".gsc_vcd_field").textContent;
+          const value = div.querySelector(".gsc_vcd_value").textContent;
+          return {
+            [name]: value,
+          };
+        }).reduce((accumulator, currentValue) => ({
+          ...accumulator,
+          ...currentValue,
+        }))
       );
 
       await page.keyboard.press("Escape");
