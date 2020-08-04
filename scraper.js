@@ -26,7 +26,9 @@ const authorSearch = async ([authorName]) => {
   let page;
 
   try {
-    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -98,7 +100,9 @@ const getAuthorData = async ([scholarId]) => {
   let browser;
   let page;
   try {
-    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -128,7 +132,7 @@ const getAuthorData = async ([scholarId]) => {
       console.log("fetching next page");
     }
 
-    const authorData = await page.evaluate(() => {
+    let authorData = await page.evaluate(() => {
       const profilePicture = document.querySelector("#gsc_prf_w img").src;
       const bioHtml = document.getElementById("gsc_prf_i");
       const name = bioHtml.childNodes[0].textContent;
@@ -137,7 +141,7 @@ const getAuthorData = async ([scholarId]) => {
       const interestsHtml = bioHtml.childNodes[3].childNodes;
       const interests = [...interestsHtml].map((a) => a.textContent);
 
-      const publications = [
+      let publications = [
         ...document.querySelectorAll("tbody tr.gsc_a_tr"),
       ].map((td) => {
         const title = td.childNodes[0].childNodes[0].textContent;
@@ -194,6 +198,52 @@ const getAuthorData = async ([scholarId]) => {
 
     if (!authorData) throw "Exception : No author data";
 
+    const getPublicationExtraInformation = async ({ title }) => {
+      console.log("in getPublicationExtraInformation");
+      console.log(title);
+
+      const publicationNameQuery = title
+        .replace("'", "@")
+        .replace('"', "@")
+        .split("@")[0];
+
+      const [a] = await page.$x(
+        "//a[contains(., '" + publicationNameQuery + "')]"
+      );
+
+      if (a) await a.click();
+      await page.waitFor(300);
+
+      const extraInformation = await page.evaluate(() =>
+        [...document.querySelectorAll("#gsc_ocd_bdy div.gs_scl")].map(
+          (div) => ({
+            name: div.querySelector(".gsc_vcd_field").textContent,
+            value: div.querySelector(".gsc_vcd_value").textContent,
+          })
+        )
+      );
+
+      await page.keyboard.press("Escape");
+      await page.waitFor(100);
+
+      return extraInformation;
+    };
+
+    for (let index = 0; index < authorData.publications.length; index++) {
+      const publication = authorData.publications[index];
+      try {
+        const extraInformation = await getPublicationExtraInformation(
+          publication
+        );
+        authorData.publications[index] = {
+          ...publication,
+          extraInformation,
+        };
+      } catch (error) {
+        return publication;
+      }
+    }
+
     return { scholarId, ...authorData };
   } catch (error) {
     console.error(error);
@@ -211,7 +261,9 @@ const getPublicationData = async ([scholarId, publicationName]) => {
   let page;
 
   try {
-    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -305,7 +357,9 @@ const getPublicationDetails = async ([scholarId, publicationName]) => {
   let page;
 
   try {
-    browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']})
+    browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     //browser = await puppeteer.launch({ devtools: true });
     page = await browser.newPage();
     await page.setRequestInterception(true);
@@ -322,8 +376,14 @@ const getPublicationDetails = async ([scholarId, publicationName]) => {
       waitUntil: "load",
       timeout: 0,
     });
+  
+    const publicationNameQuery = publicationName
+      .replace("'", "@")
+      .replace('"', "@")
+      .split("@")[0];
+      
+    const [a] = await page.$x("//a[contains(., '" + publicationNameQuery + "')]");
 
-    const [a] = await page.$x("//a[contains(., '" + publicationName + "')]");
     if (a) await a.click();
     await page.waitFor(300);
 
