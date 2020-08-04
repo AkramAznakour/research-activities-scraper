@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer");
 const { performance } = require("perf_hooks");
 
 const guideJournalURL = "https://guidejournal.net/";
-const scholarBaseUrl = "https://scholar.google.com/citations?";
+const scholarBaseUrl = "https://scholar.google.com/citations?hl=en&";
 const profilesSearchURL = scholarBaseUrl + "view_op=search_authors&mauthors=";
 
 const performanceWrapping = (jobFunction) => async (...args) => {
