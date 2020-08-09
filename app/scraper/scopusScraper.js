@@ -54,7 +54,11 @@ const authorSearch = async ({ authorName }) => {
         : "&st1=" + authorName.split(" ")[0];
 
     await page.goto(SCOPUS_SEARCH_URL + params, DIRECT_NAVIGATION_OPTIONS);
-
+   
+    await page.waitForSelector("#srchResultsList", {
+      timeout: 1000,
+    });
+    
     const authors = await page.evaluate(() => {
       const fildsToProperties = (array) => ({
         name: array[0].split('\n')[0],
