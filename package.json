@@ -24,7 +24,6 @@
     "nodemon": "^2.0.2",
     "perf_hooks": "0.0.1",
     "puppeteer": "^3.0.4",
-    "puppeteer-extra": "^3.1.13",
     "puppeteer-extra-plugin-stealth": "^2.5.0"
   },
   "devDependencies": {
