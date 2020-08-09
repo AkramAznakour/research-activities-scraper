@@ -65,6 +65,10 @@ const authorSearch = async ({ authorName }) => {
         territory: array[5],
       });
 
+      await page.waitForSelector("#srchResultsList", {
+        timeout: 1000,
+      });
+
       const htmlAuthors = [
         ...document
           .getElementById("srchResultsList")
