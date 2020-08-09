@@ -1,4 +1,3 @@
-const puppeteer = require("puppeteer");
 const { performanceWrapping } = require("./helper/performanceWrapping");
 const { setupBrowserPage } = require("./helper/setupBrowserPage");
 
