@@ -12,5 +12,7 @@ app.listen(process.env.PORT || 2000, () =>
   console.log("Server started on port :", process.env.PORT || 2000)
 );
 
+app.use("/screenshots", express.static(__dirname + "/public/screenshots"));
+
 const router = require("./routes");
 app.use("/", router);

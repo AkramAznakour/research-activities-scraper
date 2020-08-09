@@ -44,6 +44,12 @@ const authorSearch = async ({ authorName }) => {
     allowedRequests: [],
   });
 
+  // Pass the User-Agent Test.
+  const userAgent =
+    "Mozilla/5.0 (X11; Linux x86_64)" +
+    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.39 Safari/537.36";
+  await page.setUserAgent(userAgent);
+  
   try {
     const params =
       authorName.split(" ").length > 1
@@ -55,9 +61,21 @@ const authorSearch = async ({ authorName }) => {
 
     await page.goto(SCOPUS_SEARCH_URL + params, DIRECT_NAVIGATION_OPTIONS);
    
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+    }
+
     await page.waitForSelector("#srchResultsList", {
       timeout: 1000,
     });
+    
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+    }
     
     const authors = await page.evaluate(() => {
       const fildsToProperties = (array) => ({
