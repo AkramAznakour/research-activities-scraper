@@ -23,9 +23,9 @@
     "morgan": "~1.9.1",
     "nodemon": "^2.0.2",
     "perf_hooks": "0.0.1",
-    "puppeteer": "^3.0.4",
-    "puppeteer-extra": "^3.1.13",
-    "puppeteer-extra-plugin-stealth": "^2.5.0"
+    "puppeteer": "^2.1.1",
+    "puppeteer-extra": "^3.1.9",
+    "puppeteer-extra-plugin-stealth": "^2.4.5"
   },
   "devDependencies": {
     "jest": "^26.2.2"
