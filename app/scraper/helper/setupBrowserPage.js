@@ -17,7 +17,7 @@ const allRequestsTypes = [
 
 const setupBrowserPage = async ({ allowedRequests }) => {
   const browser =
-    process.env.USE_DEVTOOLS && process.env.USE_DEVTOOLS == "true"
+    process.env.USE_DEVTOOLS == "true"
       ? await puppeteer.launch({ devtools: true })
       : await puppeteer.launch({ args: ["--no-sandbox"] });
 

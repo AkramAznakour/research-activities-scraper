@@ -69,8 +69,6 @@ const authorSearch = async ({ authorName }) => {
         territory: array[5],
       });
 
-   
-
       const htmlAuthors = [
         ...document
           .getElementById("srchResultsList")
