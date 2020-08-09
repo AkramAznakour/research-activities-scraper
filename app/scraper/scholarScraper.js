@@ -22,6 +22,12 @@ const authorSearch = async ({ authorName }) => {
       DIRECT_NAVIGATION_OPTIONS
     );
 
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+    }
+
     const authors = await page.evaluate(() => {
       const authorHtmlToObject = (authorHtml) => {
         const profilePicture = authorHtml.querySelector("img").src;
@@ -72,6 +78,12 @@ const authorData = async ({ authorId }) => {
       SCHOLAR_BASE_URL + "user=" + authorId,
       DIRECT_NAVIGATION_OPTIONS
     );
+
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+    }
 
     while ((await page.$("button#gsc_bpf_more[disabled]")) == null) {
       await page.click("button#gsc_bpf_more");
@@ -230,10 +242,16 @@ const publicationData = async ({ authorId, publicationName }) => {
       DIRECT_NAVIGATION_OPTIONS
     );
 
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+    }
+
     const publicationNameQuery = publicationName
       .replace("'", "@")
       .replace('"', "@")
-      .replace('/', "@")
+      .replace("/", "@")
       .split("@")[0];
 
     const [a] = await page.$x(
@@ -266,6 +284,12 @@ const publicationData = async ({ authorId, publicationName }) => {
       DIRECT_NAVIGATION_OPTIONS
     );
 
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+    }
+    
     const publication = await page.evaluate(async () => {
       try {
         const list = [...document.querySelectorAll(".col-md-8 .col-sm-6 h6")];

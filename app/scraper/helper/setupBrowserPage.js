@@ -24,6 +24,9 @@ const setupBrowserPage = async ({ allowedRequests }) => {
   const page = await browser.newPage();
   await page.setRequestInterception(true);
 
+  if (process.env.DEBUG == true)
+    page.setViewport({ width: "1200", height: "1000" });
+
   const forbiddenRequestsTypes = allRequestsTypes.filter(
     (requestType) => !allowedRequests.includes(requestType)
   );

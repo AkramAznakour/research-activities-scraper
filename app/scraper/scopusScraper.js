@@ -61,9 +61,21 @@ const authorSearch = async ({ authorName }) => {
 
     await page.goto(SCOPUS_SEARCH_URL + params, DIRECT_NAVIGATION_OPTIONS);
    
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+    }
+
     await page.waitForSelector("#srchResultsList", {
       timeout: 1000,
     });
+    
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+    }
     
     const authors = await page.evaluate(() => {
       const fildsToProperties = (array) => ({
