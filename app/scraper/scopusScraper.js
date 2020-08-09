@@ -43,7 +43,6 @@ const authorSearch = async ({ authorName }) => {
     allowedRequests: [],
   });
 
-
   try {
     const params =
       authorName.split(" ").length > 1
