@@ -2,6 +2,8 @@ const { performanceWrapping } = require("./helper/performanceWrapping");
 const { setupBrowserPage } = require("./helper/setupBrowserPage");
 
 const platform = "scopus";
+const SCOPUS_PROFILE_URL = "https://www.scopus.com/authid/detail.uri?";
+
 const SCOPUS_SEARCH_URL =
   "https://www.scopus.com/results/authorNamesList.uri?sort=count-f" +
   "&src=al" +
@@ -53,26 +55,32 @@ const authorSearch = async ({ authorName }) => {
         : "&st1=" + authorName.split(" ")[0];
 
     await page.goto(SCOPUS_SEARCH_URL + params, DIRECT_NAVIGATION_OPTIONS);
-   
+
     if (process.env.DEBUG == "true") {
       const fileName = Date.now() + ".png";
       console.log("screenshot : ", fileName);
-      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+      await page.screenshot({
+        path: "./public/screenshots/" + fileName,
+        fullPage: true,
+      });
     }
 
     await page.waitForSelector("#srchResultsList", {
       timeout: 1000,
     });
-    
+
     if (process.env.DEBUG == "true") {
       const fileName = Date.now() + ".png";
       console.log("screenshot : ", fileName);
-      await page.screenshot({ path: "./public/screenshots/"+fileName ,fullPage: true });
+      await page.screenshot({
+        path: "./public/screenshots/" + fileName,
+        fullPage: true,
+      });
     }
-    
+
     const authors = await page.evaluate(() => {
       const fildsToProperties = (array) => ({
-        name: array[0].split('\n')[0],
+        name: array[0].split("\n")[0],
         documents: array[1],
         hIndex: array[2],
         affiliation: array[3],
@@ -124,6 +132,79 @@ const authorSearch = async ({ authorName }) => {
   }
 };
 
+const authorData = async ({ authorId }) => {
+  const { browser, page } = await setupBrowserPage({
+    allowedRequests: ["xhr", "script"],
+  });
+
+  try {
+    await page.goto(
+      SCOPUS_PROFILE_URL + "authorId=" + authorId,
+      DIRECT_NAVIGATION_OPTIONS
+    );
+
+    if (process.env.DEBUG == "true") {
+      const fileName = Date.now() + ".png";
+      console.log("screenshot : ", fileName);
+      await page.screenshot({
+        path: "./public/screenshots/" + fileName,
+        fullPage: true,
+      });
+    }
+
+    let author = await page.evaluate(() => {
+      const infosHtml = document.querySelector(".authInfoSection");
+      const name = infosHtml.querySelector("h2").textContent;
+      const university = infosHtml
+        .querySelector("#affilCountryText")
+        .textContent.trim();
+
+      const interests = [
+        ...infosHtml.querySelectorAll("#subjectAreaBadges span"),
+      ].map((i) => i.textContent);
+
+      const publications = [
+        ...document.querySelectorAll("#srchResultsList tr "),
+      ]
+        .map((tr) =>
+          [...tr.querySelectorAll("td")].map((span) => span.textContent.trim())
+        )
+        .map((publication) => ({
+          title: publication[0] ? publication[0].replace(/\n/g, "") : null,
+          citation: publication[3],
+          year: publication[2],
+          coauthors: publication[1],
+        }))
+        .filter(({ title }) => title);
+
+      return {
+        name,
+        profilePicture: "",
+        university,
+        email: "",
+        indexes: [],
+        interests,
+        publications,
+        coauthors: [],
+        citationsPerYear: [],
+      };
+    });
+
+    if (!author) throw "Exception : No author data";
+
+    return { author: { authorId, ...author } };
+  } catch (error) {
+    console.error(error);
+    return { error };
+  } finally {
+    await page.close();
+    console.log("Finally : Page closed");
+    await browser.close();
+    console.log("Finally : Browser closed");
+  }
+};
+
 module.exports = {
   authorSearch: performanceWrapping(authorSearch),
+  authorData: performanceWrapping(authorData),
 };
