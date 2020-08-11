@@ -154,10 +154,11 @@ const authorData = async ({ authorId }) => {
 
     let author = await page.evaluate(() => {
       const infosHtml = document.querySelector(".authInfoSection");
-      const name = infosHtml.querySelector("h2").textContent;
+      const name = infosHtml.querySelector("h2").textContent.replace(",", "");
       const university = infosHtml
         .querySelector("#affilCountryText")
-        .textContent.trim();
+        .textContent.trim()
+        .replace(/\n/g, "");
 
       const interests = [
         ...infosHtml.querySelectorAll("#subjectAreaBadges span"),
@@ -169,11 +170,13 @@ const authorData = async ({ authorId }) => {
         .map((tr) =>
           [...tr.querySelectorAll("td")].map((span) => span.textContent.trim())
         )
+        .filter((sections) => sections.length > 2)
         .map((publication) => ({
           title: publication[0] ? publication[0].replace(/\n/g, "") : null,
-          citation: publication[3],
+          source: publication[3],
+          citation: publication[4],
           year: publication[2],
-          coauthors: publication[1],
+          authors: publication[1].match(/[^,]+,[^,]+/g),
         }))
         .filter(({ title }) => title);
 

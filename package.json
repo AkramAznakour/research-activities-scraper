@@ -8,7 +8,7 @@
   "author": "Akram Aznakour",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon server.js --ignore 'public/*'",
     "start": "node server.js",
     "test": "jest"
   },
