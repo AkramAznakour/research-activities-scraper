@@ -15,13 +15,18 @@ const authorSearch = async (req, resp) => {
   const scholarAuthors = await scholarScraper.authorSearch({ authorName });
   const scopusAuthors = await scopusScraper.authorSearch({ authorName });
 
-  if (scholarAuthors.authors && scopusAuthors.authors) {
-    const authors = [...scholarAuthors.authors, ...scopusAuthors.authors];
-    resp.send({ authors });
+  if (scholarAuthors.error && scopusAuthors.error) {
+    resp.status(200).send({
+      error: { scholar: scholarAuthors.error, scopus: scopusAuthors.error },
+    });
   }
 
-  if (scholarAuthors.error || scopusAuthors.error) {
-    resp.status(200).send({ error: "No scholar id" });
+  if (scholarAuthors.authors || scopusAuthors.authors) {
+    const authors = [
+      ...(scholarAuthors.authors ?? []),
+      ...(scopusAuthors.authors ?? []),
+    ];
+    resp.send({ authors });
   }
 };
 
