@@ -1,9 +1,9 @@
 const helpersController = require("./helpersController");
 const authorsController = require("./authorsController");
-const publicationsController = require("./publicationsController");
+const journalsController = require("./journalsController");
 
 module.exports = {
   helpersController,
   authorsController,
-  publicationsController,
+  journalsController,
 };

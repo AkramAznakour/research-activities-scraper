@@ -1,6 +1,6 @@
 const {
   helpersController,
-  publicationsController,
+  journalsController,
   authorsController,
 } = require("./app/controllers");
 
@@ -12,9 +12,6 @@ router.get("/internet-check", helpersController.internetCheck);
 router.get("/author-search/:authorName", authorsController.authorSearch);
 router.get("/author/:platform/:authorId", authorsController.author);
 
-router.get(
-  "/publication/:authorId/:publicationName",
-  publicationsController.publicationData
-);
+router.get("/journal/:journalName", journalsController.journalData);
 
 module.exports = router;
