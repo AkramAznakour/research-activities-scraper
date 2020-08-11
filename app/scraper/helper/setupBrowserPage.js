@@ -30,6 +30,11 @@ const setupBrowserPage = async ({ allowedRequests }) => {
   if (process.env.DEBUG == true)
     page.setViewport({ width: "1200", height: "1000" });
 
+  await page.evaluateOnNewDocument(() => {
+    const newProto = navigator.__proto__;
+    delete newProto.webdriver;
+    navigator.__proto__ = newProto;
+  });
 
   const forbiddenRequestsTypes = allRequestsTypes.filter(
     (requestType) => !allowedRequests.includes(requestType)
