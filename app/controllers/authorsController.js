@@ -23,8 +23,8 @@ const authorSearch = async (req, resp) => {
 
   if (scholarAuthors.authors || scopusAuthors.authors) {
     const authors = [
-      ...(scholarAuthors.authors ?? []),
-      ...(scopusAuthors.authors ?? []),
+      ...(scholarAuthors.authors ? scholarAuthors.authors : []),
+      ...(scopusAuthors.authors ? scopusAuthors.authors : []),
     ];
     resp.send({ authors });
   }
