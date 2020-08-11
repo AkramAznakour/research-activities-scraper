@@ -66,12 +66,12 @@ const author = async (req, resp) => {
     if (
       process.env.STORING_AUTHORS_DATA &&
       process.env.STORING_AUTHORS_DATA === "true"
-    )
-    console.log("here");
+    ) {
       fs.writeFileSync(
         `${AUTHOR_STORAGE_PATH}/${authorId}.json`,
         JSON.stringify(author)
       );
+    }
   } else if (scrapingResult.error) {
     const { error } = scrapingResult;
     resp.status(200).send({ error });
