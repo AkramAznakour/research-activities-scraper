@@ -20,7 +20,7 @@ const allRequestsTypes = [
 
 const setupBrowserPage = async ({ allowedRequests }) => {
   const browser = await puppeteer.launch({
-    args: ["--no-sandbox"],
+    args: [ "--no-sandbox", "--headless" ],
     headless: true,
   });
 
