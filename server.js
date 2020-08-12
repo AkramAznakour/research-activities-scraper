@@ -1,10 +1,11 @@
 const express = require('express');
+const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const cors = require("cors");
 const app = express();
 
+const Sentry = require('@sentry/node');
 Sentry.init({ dsn: 'https://80a12083a1774420b431700d1d2cf56f@o433230.ingest.sentry.io/5387943' });
 // The request handler must be the first middleware on the app
 app.use(Sentry.Handlers.requestHandler());
