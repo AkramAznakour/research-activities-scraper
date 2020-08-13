@@ -29,6 +29,6 @@
     "puppeteer-extra-plugin-stealth": "^2.4.5"
   },
   "devDependencies": {
-    "jest": "^26.3.0"
+    "jest": "^26.4.0"
   }
 }
