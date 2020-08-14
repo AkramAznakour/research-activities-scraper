@@ -218,7 +218,7 @@ const authorData = async ({ authorId }) => {
       }
     }
 
-    return { author: { authorId, ...author } };
+    return { author: { authorId, platform: PLATFORM, ...author } };
   } catch (error) {
     console.error(error);
     return { error };
