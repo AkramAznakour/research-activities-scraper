@@ -1,7 +1,7 @@
 const { performanceWrapping } = require("./helper/performanceWrapping");
 const { setupBrowserPage } = require("./helper/setupBrowserPage");
 
-const platform = "scopus";
+const PLATFORM = "scopus";
 const SCOPUS_PROFILE_URL = "https://www.scopus.com/authid/detail.uri?";
 
 const SCOPUS_SEARCH_URL =
@@ -119,7 +119,7 @@ const authorSearch = async ({ authorName }) => {
     });
 
     return {
-      authors: authors.map((author) => ({ ...author, platform })),
+      authors: authors.map((author) => ({ ...author, platform: PLATFORM })),
     };
   } catch (error) {
     console.error(error);
@@ -195,7 +195,7 @@ const authorData = async ({ authorId }) => {
 
     if (!author) throw "Exception : No author data";
 
-    return { author: { authorId, ...author } };
+    return { author: { authorId, platform: PLATFORM, ...author } };
   } catch (error) {
     console.error(error);
     return { error };
