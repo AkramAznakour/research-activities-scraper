@@ -156,9 +156,9 @@ const authorData = async ({ authorId }) => {
       const infosHtml = document.querySelector(".authInfoSection");
       const name = infosHtml.querySelector("h2").textContent.replace(",", "");
       const university = infosHtml
-        .querySelector("#affilCountryText")
-        .textContent.trim()
-        .replace(/\n/g, "");
+        .querySelector("#affilCountryText li")
+        .innerText.replace("View more", "")
+        .trim();
 
       const interests = [
         ...infosHtml.querySelectorAll("#subjectAreaBadges span"),
