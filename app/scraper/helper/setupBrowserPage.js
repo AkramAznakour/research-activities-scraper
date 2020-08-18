@@ -1,7 +1,6 @@
 const puppeteer = require("puppeteer-extra");
-const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 
-puppeteer.use(StealthPlugin());
+puppeteer.use(require("puppeteer-extra-plugin-stealth")());
 
 const allRequestsTypes = [
   "stylesheet",
