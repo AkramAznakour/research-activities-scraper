@@ -1,7 +1,6 @@
 const puppeteer = require("puppeteer-extra");
-const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 
-puppeteer.use(StealthPlugin());
+puppeteer.use(require("puppeteer-extra-plugin-stealth")());
 
 const allRequestsTypes = [
   "stylesheet",
@@ -20,8 +19,8 @@ const allRequestsTypes = [
 
 const setupBrowserPage = async ({ allowedRequests }) => {
   const browser = await puppeteer.launch({
-    args: [ "--no-sandbox", "--headless" ],
-    headless: true,
+    args: ["--no-sandbox"],
+    headless: false,
   });
 
   const page = await browser.newPage();
@@ -45,6 +44,11 @@ const setupBrowserPage = async ({ allowedRequests }) => {
       ? request.abort()
       : request.continue()
   );
+
+  await page.mouse.move(100, 100);
+  await page.mouse.down();
+  await page.mouse.move(200, 200);
+  await page.mouse.up();
 
   return { browser, page };
 };
