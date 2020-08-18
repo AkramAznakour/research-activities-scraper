@@ -45,6 +45,11 @@ const setupBrowserPage = async ({ allowedRequests }) => {
       : request.continue()
   );
 
+  await page.mouse.move(100, 100);
+  await page.mouse.down();
+  await page.mouse.move(200, 200);
+  await page.mouse.up();
+
   return { browser, page };
 };
 
