@@ -180,6 +180,19 @@ const authorData = async ({ authorId }) => {
         }))
         .filter(({ title }) => title);
 
+      const citationsPerYear = Object.values(
+        publications.reduce(
+          (r, o) => (
+            r[o.year]
+              ? (r[o.year].citations =
+                  parseInt(o.citation) + parseInt(r[o.year].citations)) 
+              : (r[o.year] = { year: o.year, citations: parseInt(o.citation) }),
+            r
+          ),
+          {}
+        )
+      );
+
       return {
         name,
         profilePicture: "",
@@ -189,7 +202,7 @@ const authorData = async ({ authorId }) => {
         interests,
         publications,
         coauthors: [],
-        citationsPerYear: [],
+        citationsPerYear,
       };
     });
 
