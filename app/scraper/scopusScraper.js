@@ -202,7 +202,7 @@ const authorData = async ({ authorId }) => {
         interests,
         publications,
         coauthors: [],
-        citationsPerYear: [],
+        citationsPerYear,
       };
     });
 
