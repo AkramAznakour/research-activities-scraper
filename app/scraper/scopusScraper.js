@@ -213,7 +213,7 @@ const authorData = async ({ authorId }) => {
         profilePicture: "",
         university,
         email: "",
-        indexes: [],
+        indexes,
         interests,
         publications,
         coauthors: [],
