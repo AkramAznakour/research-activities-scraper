@@ -134,7 +134,7 @@ const authorSearch = async ({ authorName }) => {
 
 const authorData = async ({ authorId }) => {
   const { browser, page } = await setupBrowserPage({
-    allowedRequests: ["xhr", "script"],
+    allowedRequests: ["xhr", "script", "fetch"],
   });
 
   try {
@@ -180,18 +180,15 @@ const authorData = async ({ authorId }) => {
         }))
         .filter(({ title }) => title);
 
-      const citationsPerYear = Object.values(
-        publications.reduce(
-          (r, o) => (
-            r[o.year]
-              ? (r[o.year].citations =
-                  parseInt(o.citation) + parseInt(r[o.year].citations)) 
-              : (r[o.year] = { year: o.year, citations: parseInt(o.citation) }),
-            r
-          ),
-          {}
-        )
-      );
+      const citationsPerYear = [
+        ...document.querySelectorAll(".highcharts-root path"),
+      ]
+        .filter((a) => a.attributes["aria-label"])
+        .map((a) =>
+          a.attributes["aria-label"].textContent
+            .split(/[ ,]+/)
+            .map((a) => a.replace(".", ""))
+        ).map((a) => ({ year: a[1], citations: a[2] }));
 
       return {
         name,
