@@ -190,6 +190,24 @@ const authorData = async ({ authorId }) => {
             .map((a) => a.replace(".", ""))
         ).map((a) => ({ year: a[1], citations: a[2] }));
 
+      const indexes = [
+        {
+          name: "citations",
+          total: document.querySelector("#totalCiteCount").textContent,
+          lastFiveYears: citationsPerYear.reduce(
+            (a, b) => a + parseInt(b["citations"] || 0),
+            0
+          ),
+        },
+        {
+          name: "h-index",
+          total: document.querySelector(
+            "#authorDetailsHindex > div.panel-body > div > span"
+          ).textContent,
+          lastFiveYears: "",
+        },
+      ];
+
       return {
         name,
         profilePicture: "",
