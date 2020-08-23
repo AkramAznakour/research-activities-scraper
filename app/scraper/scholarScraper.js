@@ -197,13 +197,11 @@ const authorData = async ({ authorId }) => {
         timeout: 1000,
         visible: false,
       });
-      console.log(Object.keys(extraInformation).length);
       return extraInformation;
     };
 
     for (let index = 0; index < author.publications.length; index++) {
       const publication = author.publications[index];
-      console.log("publication : ", index + 1);
       try {
         const extraInformation = await getPublicationExtraInformation(
           publication
