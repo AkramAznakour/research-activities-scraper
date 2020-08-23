@@ -2,7 +2,6 @@ const { performanceWrapping } = require("./helper/performanceWrapping");
 const { setupBrowserPage } = require("./helper/setupBrowserPage");
 
 const PLATFORM = "scholar";
-const GUIDE_JOURNAL_URL = "https://guidejournal.net/";
 const SCHOLAR_BASE_URL = "https://scholar.google.com/citations?hl=en&";
 const PROFILES_SEARCH_URL =
   SCHOLAR_BASE_URL + "view_op=search_authors&mauthors=";
