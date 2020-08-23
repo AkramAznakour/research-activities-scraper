@@ -79,7 +79,7 @@ const authorSearch = async ({ authorName }) => {
     }
 
     const authors = await page.evaluate(() => {
-      const fildsToProperties = (array) => ({
+      const fieldsToProperties = (array) => ({
         name: array[0].split("\n")[0],
         documents: array[1],
         hIndex: array[2],
@@ -96,8 +96,8 @@ const authorSearch = async ({ authorName }) => {
 
       console.log(htmlAuthors.length);
       const authors = htmlAuthors.map((a) => {
-        const htmlFilds = [...a.querySelectorAll("td")];
-        const fildesArray = htmlFilds.map((b) => b.textContent.trim());
+        const htmlFields = [...a.querySelectorAll("td")];
+        const fieldsArray = htmlFields.map((b) => b.textContent.trim());
         const link = a.querySelector("a") ? a.querySelector("a").href : "";
         const authorId = link.includes("authorID")
           ? link
@@ -108,7 +108,7 @@ const authorSearch = async ({ authorName }) => {
 
         return {
           authorId,
-          ...fildsToProperties(fildesArray),
+          ...fieldsToProperties(fieldsArray),
           profilePicture: "",
           interests: [],
           link,
