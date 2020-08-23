@@ -1,9 +1,9 @@
 const scholarScraper = require("./scholarScraper");
 const scopusScraper = require("./scopusScraper");
-const guidejournalScraper = require("./guidejournalScraper");
+const guideJournalScraper = require("./guideJournalScraper");
 
 module.exports = {
   scholarScraper,
   scopusScraper,
-  guidejournalScraper
+  guideJournalScraper
 };

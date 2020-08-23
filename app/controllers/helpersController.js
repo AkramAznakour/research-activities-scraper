@@ -7,7 +7,7 @@ const hello = async (req, resp) => {
 
 const InternetCheckHelper = (callback) => {
   dns.lookup("scholar.google.com", (err) => {
-    if (err && err.code == "ENOTFOUND") callback(false);
+    if (err && err.code == "not found") callback(false);
     else callback(true);
   });
 };

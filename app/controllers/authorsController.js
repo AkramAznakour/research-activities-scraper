@@ -76,7 +76,7 @@ const author = async (req, resp) => {
     const { error } = scrapingResult;
     resp.status(200).send({ error });
   } else {
-    resp.send({ error: "unkonwn issue" });
+    resp.send({ error: "unknown issue" });
   }
 };
 
