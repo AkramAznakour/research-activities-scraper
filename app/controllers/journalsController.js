@@ -3,7 +3,6 @@ const { scimagojrScraper } = require("../scraper");
 const journalData = async (req, resp) => {
   const { journalName, year } = req.params;
 
-  console.log("journalName:", journalName);
   if (!journalName) {
     resp.status(200).send({ error: "No journal name" });
     return;
