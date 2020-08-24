@@ -10,6 +10,7 @@ const journalData = async (req, resp) => {
   }
   const journal = await scimagojrScraper.journalData({
     journalName,
+    year,
   });
 
   if (journal.journal) resp.send({ journal: journal.journal });
