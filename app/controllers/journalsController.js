@@ -1,14 +1,14 @@
-const { guideJournalScraper } = require("../scraper");
+const { scimagojrScraper } = require("../scraper");
 
 const journalData = async (req, resp) => {
-  const { journalName } = req.params;
+  const { journalName, year } = req.params;
 
   console.log("journalName:", journalName);
   if (!journalName) {
     resp.status(200).send({ error: "No journal name" });
     return;
   }
-  const journal = await guideJournalScraper.journalData({
+  const journal = await scimagojrScraper.journalData({
     journalName,
   });
 
