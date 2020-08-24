@@ -14,7 +14,7 @@ const journalData = async (req, resp) => {
 
   if (journal.journal) resp.send({ journal: journal.journal });
   else if (journal.error) {
-    resp.status(200).send({ error: "No journal data" });
+    resp.status(200).send({ error: journal.error });
   } else {
     resp.status(500).send({ error: "Unhandled error" });
   }
