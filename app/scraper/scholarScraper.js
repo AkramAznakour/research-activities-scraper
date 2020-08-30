@@ -66,7 +66,7 @@ const authorSearch = async ({ authorName }) => {
 
 const authorData = async ({ authorId }) => {
   const { browser, page } = await setupBrowserPage({
-    allowedRequests: ["xhr", "script"],
+    allowedRequests: [],
   });
 
   try {
