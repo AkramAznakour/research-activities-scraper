@@ -99,13 +99,15 @@ const authorData = async ({ authorId }) => {
         ...document.querySelectorAll("tbody tr.gsc_a_tr"),
       ].map((td) => {
         const title = td.childNodes[0].childNodes[0].textContent;
+        const link =
+          td.childNodes[0].childNodes[0].attributes["data-href"].value;
         const citation = td.childNodes[1].textContent;
         const year = td.childNodes[2].textContent;
         const authors = td.childNodes[0].childNodes[1].textContent
           .split(",")
           .map((a) => a.trim());
 
-        return { title, authors, citation, year };
+        return { title, authors, citation, year, link };
       });
 
       const indexes = [
