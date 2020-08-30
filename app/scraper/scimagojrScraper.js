@@ -62,7 +62,9 @@ const journalData = async ({ journalName, year }) => {
       POSSIBLE_JOURNALS_SELECTOR
     );
 
-    await page.goto(matchingJournal.link, DIRECT_NAVIGATION_OPTIONS);
+    if (matchingJournal.link)
+      await page.goto(matchingJournal.link, DIRECT_NAVIGATION_OPTIONS);
+    else return { error: matchingJournal };
 
     const SJR = await page.evaluate(
       async (year, SJR_LIST_SELECTOR) => {
