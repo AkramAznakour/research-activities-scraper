@@ -94,7 +94,6 @@ const authorSearch = async ({ authorName }) => {
           .querySelectorAll("tr.searchArea"),
       ];
 
-      console.log(htmlAuthors.length);
       const authors = htmlAuthors.map((a) => {
         const htmlFields = [...a.querySelectorAll("td")];
         const fieldsArray = htmlFields.map((b) => b.textContent.trim());
@@ -126,9 +125,7 @@ const authorSearch = async ({ authorName }) => {
     return { error };
   } finally {
     await page.close();
-    console.log("Finally : Page closed");
     await browser.close();
-    console.log("Finally : Browser closed");
   }
 };
 
@@ -229,9 +226,7 @@ const authorData = async ({ authorId }) => {
     return { error };
   } finally {
     await page.close();
-    console.log("Finally : Page closed");
     await browser.close();
-    console.log("Finally : Browser closed");
   }
 };
 
