@@ -34,6 +34,9 @@ const journalData = async ({ journalName, year }) => {
 
     const matchingJournal = await page.evaluate(
       async (journalName, POSSIBLE_JOURNALS_SELECTOR) => {
+        const trimJournalName = ({ journalName }) =>
+          journalName.toLocaleLowerCase().replace(".", "").trim();
+
         try {
           const possibleJournals = [
             ...document.querySelectorAll(POSSIBLE_JOURNALS_SELECTOR),
@@ -43,17 +46,10 @@ const journalData = async ({ journalName, year }) => {
           }));
 
           const matchingJournals = possibleJournals.filter(({ name }) => {
-            const trimmedJournalName = journalName
-              .toLocaleLowerCase()
-              .replace(".", "")
-              .trim();
-
-            const TrimmedName = name
-              .toLocaleLowerCase()
-              .replace(".", "")
-              .trim();
-
-            return trimmedJournalName === TrimmedName;
+            return (
+              trimJournalName({ journalName }) ===
+              trimJournalName({ journalName: name })
+            );
           });
 
           if (matchingJournals.length === 0) return null;
