@@ -76,7 +76,6 @@ const journalData = async ({ journalName, year }) => {
           else return results[0].sjr;
           
         } catch (error) {
-          console.error(error);
           return { error };
         }
       },
@@ -90,9 +89,7 @@ const journalData = async ({ journalName, year }) => {
     return { error };
   } finally {
     await page.close();
-    console.log("Finally : Page closed");
     await browser.close();
-    console.log("Finally : Browser closed");
   }
 };
 
