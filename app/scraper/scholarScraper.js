@@ -164,7 +164,7 @@ const authorData = async ({ authorId }) => {
 
       if (a) {
         await a.click();
-        await page.waitForSelector("#gsc_ocd_bdy", {
+        await page.waitForSelector("#gsc_vcd_title > a", {
           timeout: 1000,
         });
       } else {
@@ -190,7 +190,7 @@ const authorData = async ({ authorId }) => {
       );
 
       await page.keyboard.press("Escape");
-      await page.waitForSelector("#gsc_ocd_bdy", {
+      await page.waitForSelector("#gsc_vcd_title > a", {
         timeout: 1000,
         visible: false,
       });
