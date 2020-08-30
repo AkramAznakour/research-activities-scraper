@@ -154,6 +154,10 @@ const authorData = async ({ authorId }) => {
 
     if (!author) throw "Exception : No author data";
 
+    const getPublicationExtraInformation = async ({ title, link }) => {
+      await page.goto(
+        "https://scholar.google.com" + link,
+        DIRECT_NAVIGATION_OPTIONS
       );
 
       const extraInformation = await page.evaluate(() =>
