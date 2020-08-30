@@ -34,6 +34,9 @@ const journalData = async ({ journalName, year }) => {
 
     const matchingJournal = await page.evaluate(
       async (journalName, POSSIBLE_JOURNALS_SELECTOR) => {
+        const trimJournalName = ({ journalName }) =>
+          journalName.toLocaleLowerCase().replace(".", "").trim();
+
         try {
           const possibleJournals = [
             ...document.querySelectorAll(POSSIBLE_JOURNALS_SELECTOR),
@@ -43,17 +46,10 @@ const journalData = async ({ journalName, year }) => {
           }));
 
           const matchingJournals = possibleJournals.filter(({ name }) => {
-            const trimmedJournalName = journalName
-              .toLocaleLowerCase()
-              .replace(".", "")
-              .trim();
-
-            const TrimmedName = name
-              .toLocaleLowerCase()
-              .replace(".", "")
-              .trim();
-
-            return trimmedJournalName === TrimmedName;
+            return (
+              trimJournalName({ journalName }) ===
+              trimJournalName({ journalName: name })
+            );
           });
 
           if (matchingJournals.length === 0) return null;
@@ -66,7 +62,9 @@ const journalData = async ({ journalName, year }) => {
       POSSIBLE_JOURNALS_SELECTOR
     );
 
-    await page.goto(matchingJournal.link, DIRECT_NAVIGATION_OPTIONS);
+    if (matchingJournal.link)
+      await page.goto(matchingJournal.link, DIRECT_NAVIGATION_OPTIONS);
+    else return { error: matchingJournal };
 
     const SJR = await page.evaluate(
       async (year, SJR_LIST_SELECTOR) => {
@@ -74,13 +72,16 @@ const journalData = async ({ journalName, year }) => {
           const results = [...document.querySelectorAll(SJR_LIST_SELECTOR)]
             .map((a) => [...a.querySelectorAll("td")])
             .map((a) => ({ year: a[0].textContent, sjr: a[1].textContent }))
-            .filter((result) => result.year === year);
-
+            .sort((a, b) => (parseInt(a.year) < parseInt(b.year) ? 1 : -1))
+            .sort(
+              (a, b) =>
+                Math.abs(parseInt(a.year) - parseInt(year)) -
+                Math.abs(parseInt(b.year) - parseInt(year))
+            );
           if (results.length === 0) return null;
           else return results[0].sjr;
           
         } catch (error) {
-          console.error(error);
           return { error };
         }
       },
@@ -94,9 +95,7 @@ const journalData = async ({ journalName, year }) => {
     return { error };
   } finally {
     await page.close();
-    console.log("Finally : Page closed");
     await browser.close();
-    console.log("Finally : Browser closed");
   }
 };
 

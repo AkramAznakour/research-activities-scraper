@@ -1,10 +1,11 @@
 const { performance } = require("perf_hooks");
 
-const performanceWrapping = (jobFunction) => async ({
-  performanceWrapping = true,
-  ...args
-}) => {
-  if (!performanceWrapping) return await jobFunction(args);
+const performanceWrapping = (jobFunction) => async ({ ...args }) => {
+  if (
+    !process.env.PERFORMANCE_WRAPPING ||
+    process.env.PERFORMANCE_WRAPPING == "false"
+  )
+    return await jobFunction(args);
 
   const t0 = performance.now();
   const result = await jobFunction(args);
