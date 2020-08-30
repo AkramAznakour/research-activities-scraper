@@ -6,6 +6,8 @@ const POSSIBLE_JOURNALS_SELECTOR =
   "body > div.journaldescription.colblock > div.search_results > a";
 const SJR_LIST_SELECTOR =
   "body > div.dashboard > div:nth-child(2) > div.cellcontent > div:nth-child(2) > table > tbody > tr";
+const PUBLICATION_TYPE_SELECTOR =
+  "body > div.journaldescription.colblock > table > tbody > tr:nth-child(4) > td:nth-child(2)";
 
 const DIRECT_NAVIGATION_OPTIONS = {
   waitUntil: "load",
@@ -65,6 +67,15 @@ const journalData = async ({ journalName, year }) => {
     if (matchingJournal.link)
       await page.goto(matchingJournal.link, DIRECT_NAVIGATION_OPTIONS);
     else return { error: matchingJournal };
+
+    const publicationType = await page.evaluate(
+      async (PUBLICATION_TYPE_SELECTOR) =>
+        document.querySelector(PUBLICATION_TYPE_SELECTOR).textContent,
+      PUBLICATION_TYPE_SELECTOR
+    );
+
+    if (publicationType.toLocaleLowerCase().includes("conference"))
+      return { error: "conference" };
 
     const SJR = await page.evaluate(
       async (year, SJR_LIST_SELECTOR) => {
