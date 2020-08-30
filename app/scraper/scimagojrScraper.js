@@ -68,6 +68,15 @@ const journalData = async ({ journalName, year }) => {
       await page.goto(matchingJournal.link, DIRECT_NAVIGATION_OPTIONS);
     else return { error: matchingJournal };
 
+    const publicationType = await page.evaluate(
+      async (PUBLICATION_TYPE_SELECTOR) =>
+        document.querySelector(PUBLICATION_TYPE_SELECTOR).textContent,
+      PUBLICATION_TYPE_SELECTOR
+    );
+
+    if (publicationType.toLocaleLowerCase().includes("conference"))
+      return { error: "conference" };
+
     const SJR = await page.evaluate(
       async (year, SJR_LIST_SELECTOR) => {
         try {
