@@ -66,7 +66,7 @@ const authorSearch = async ({ authorName }) => {
 
 const authorData = async ({ authorId }) => {
   const { browser, page } = await setupBrowserPage({
-    allowedRequests: ["xhr", "script"],
+    allowedRequests: [],
   });
 
   try {
@@ -99,13 +99,15 @@ const authorData = async ({ authorId }) => {
         ...document.querySelectorAll("tbody tr.gsc_a_tr"),
       ].map((td) => {
         const title = td.childNodes[0].childNodes[0].textContent;
+        const link =
+          td.childNodes[0].childNodes[0].attributes["data-href"].value;
         const citation = td.childNodes[1].textContent;
         const year = td.childNodes[2].textContent;
         const authors = td.childNodes[0].childNodes[1].textContent
           .split(",")
           .map((a) => a.trim());
 
-        return { title, authors, citation, year };
+        return { title, authors, citation, year, link };
       });
 
       const indexes = [
@@ -152,24 +154,11 @@ const authorData = async ({ authorId }) => {
 
     if (!author) throw "Exception : No author data";
 
-    const getPublicationExtraInformation = async ({ title }) => {
-      const publicationNameQuery = title
-        .replace("'", "@")
-        .replace('"', "@")
-        .split("@")[0];
-
-      const [a] = await page.$x(
-        "//a[contains(., '" + publicationNameQuery + "')]"
+    const getPublicationExtraInformation = async ({ title, link }) => {
+      await page.goto(
+        "https://scholar.google.com" + link,
+        DIRECT_NAVIGATION_OPTIONS
       );
-
-      if (a) {
-        await a.click();
-        await page.waitForSelector("#gsc_vcd_title > a", {
-          timeout: 1000,
-        });
-      } else {
-        return {};
-      }
 
       const extraInformation = await page.evaluate(() =>
         [...document.querySelectorAll("#gsc_ocd_bdy div.gs_scl")]
@@ -189,11 +178,6 @@ const authorData = async ({ authorId }) => {
           )
       );
 
-      await page.keyboard.press("Escape");
-      await page.waitForSelector("#gsc_vcd_title > a", {
-        timeout: 1000,
-        visible: false,
-      });
       return extraInformation;
     };
 
