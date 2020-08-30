@@ -154,24 +154,7 @@ const authorData = async ({ authorId }) => {
 
     if (!author) throw "Exception : No author data";
 
-    const getPublicationExtraInformation = async ({ title }) => {
-      const publicationNameQuery = title
-        .replace("'", "@")
-        .replace('"', "@")
-        .split("@")[0];
-
-      const [a] = await page.$x(
-        "//a[contains(., '" + publicationNameQuery + "')]"
       );
-
-      if (a) {
-        await a.click();
-        await page.waitForSelector("#gsc_vcd_title > a", {
-          timeout: 1000,
-        });
-      } else {
-        return {};
-      }
 
       const extraInformation = await page.evaluate(() =>
         [...document.querySelectorAll("#gsc_ocd_bdy div.gs_scl")]
@@ -191,11 +174,6 @@ const authorData = async ({ authorId }) => {
           )
       );
 
-      await page.keyboard.press("Escape");
-      await page.waitForSelector("#gsc_vcd_title > a", {
-        timeout: 1000,
-        visible: false,
-      });
       return extraInformation;
     };
 
