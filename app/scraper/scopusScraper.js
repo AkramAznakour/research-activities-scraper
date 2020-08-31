@@ -148,6 +148,8 @@ const authorData = async ({ authorId }) => {
       });
     }
 
+    await page.waitForSelector(".highcharts-root path");
+
     let author = await page.evaluate(() => {
       const infosHtml = document.querySelector(".authInfoSection");
       const name = infosHtml.querySelector("h2").textContent.replace(",", "");
