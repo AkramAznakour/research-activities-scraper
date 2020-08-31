@@ -10,8 +10,7 @@ const SCOPUS_SEARCH_URL =
   "&sid=ea647886136e8ebb1b9b68f063130655" +
   "&sot=al" +
   "&sdt=al" +
-  "&sl=21" +
-  "&s=AUTHLASTNAME%28lachgar%29" +
+  "&sl=44" +
   "&orcidId=" +
   "&selectionPageSearch=anl" +
   "&reselectAuthor=false" +
@@ -47,7 +46,7 @@ const authorSearch = async ({ authorName }) => {
 
   try {
     const params =
-      authorName.split(" ").length > 1
+      authorName.trim().split(" ").length > 1
         ? "&st1=" +
           authorName.split(" ")[0] +
           "&st2=" +
@@ -149,6 +148,8 @@ const authorData = async ({ authorId }) => {
       });
     }
 
+    await page.waitForSelector(".highcharts-root path");
+
     let author = await page.evaluate(() => {
       const infosHtml = document.querySelector(".authInfoSection");
       const name = infosHtml.querySelector("h2").textContent.replace(",", "");
@@ -159,8 +160,11 @@ const authorData = async ({ authorId }) => {
 
       const interests = [
         ...infosHtml.querySelectorAll("#subjectAreaBadges span"),
-      ].map((i) => i.textContent);
-
+      ]
+        .map((i) => i.textContent)
+        .map((i) => i.trim())
+        .filter((i) => i !== "")
+        .filter((i) => !i.toLowerCase().includes("view all"));
       const publications = [
         ...document.querySelectorAll("#srchResultsList tr "),
       ]
@@ -170,7 +174,7 @@ const authorData = async ({ authorId }) => {
         .filter((sections) => sections.length > 2)
         .map((publication) => ({
           title: publication[0] ? publication[0].replace(/\n/g, "") : null,
-          source: publication[3],
+          source: publication[3] ? publication[3].split("\n")[0] : null,
           citation: publication[4],
           year: publication[2],
           authors: publication[1].match(/[^,]+,[^,]+/g),
