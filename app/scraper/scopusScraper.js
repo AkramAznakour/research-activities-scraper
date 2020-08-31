@@ -10,8 +10,7 @@ const SCOPUS_SEARCH_URL =
   "&sid=ea647886136e8ebb1b9b68f063130655" +
   "&sot=al" +
   "&sdt=al" +
-  "&sl=21" +
-  "&s=AUTHLASTNAME%28lachgar%29" +
+  "&sl=44" +
   "&orcidId=" +
   "&selectionPageSearch=anl" +
   "&reselectAuthor=false" +
@@ -47,7 +46,7 @@ const authorSearch = async ({ authorName }) => {
 
   try {
     const params =
-      authorName.split(" ").length > 1
+      authorName.trim().split(" ").length > 1
         ? "&st1=" +
           authorName.split(" ")[0] +
           "&st2=" +
@@ -161,6 +160,7 @@ const authorData = async ({ authorId }) => {
         ...infosHtml.querySelectorAll("#subjectAreaBadges span"),
       ].map((i) => i.textContent);
 
+        .filter((i) => i !== "")
       const publications = [
         ...document.querySelectorAll("#srchResultsList tr "),
       ]
