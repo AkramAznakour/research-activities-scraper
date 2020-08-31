@@ -174,7 +174,7 @@ const authorData = async ({ authorId }) => {
         .filter((sections) => sections.length > 2)
         .map((publication) => ({
           title: publication[0] ? publication[0].replace(/\n/g, "") : null,
-          source: publication[3],
+          source: publication[3] ? publication[3].split("\n")[0] : null,
           citation: publication[4],
           year: publication[2],
           authors: publication[1].match(/[^,]+,[^,]+/g),
