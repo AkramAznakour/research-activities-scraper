@@ -160,9 +160,11 @@ const authorData = async ({ authorId }) => {
 
       const interests = [
         ...infosHtml.querySelectorAll("#subjectAreaBadges span"),
-      ].map((i) => i.textContent);
-
+      ]
+        .map((i) => i.textContent)
+        .map((i) => i.trim())
         .filter((i) => i !== "")
+        .filter((i) => !i.toLowerCase().includes("view all"));
       const publications = [
         ...document.querySelectorAll("#srchResultsList tr "),
       ]
