@@ -82,6 +82,7 @@ const journalData = async ({ journalName, year }) => {
         try {
           const results = [...document.querySelectorAll(SJR_LIST_SELECTOR)]
             .map((a) => [...a.querySelectorAll("td")])
+            .filter((tds) => tds.length === 2)
             .map((a) => ({ year: a[0].textContent, sjr: a[1].textContent }))
             .sort((a, b) => (parseInt(a.year) < parseInt(b.year) ? 1 : -1))
             .sort(
