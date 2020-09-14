@@ -24,7 +24,7 @@
     "morgan": "~1.10.0",
     "nodemon": "^2.0.4",
     "perf_hooks": "0.0.1",
-    "puppeteer": "^5.2.1",
+    "puppeteer": "^5.3.0",
     "puppeteer-extra": "^3.1.15",
     "puppeteer-extra-plugin-stealth": "^2.6.1"
   },
