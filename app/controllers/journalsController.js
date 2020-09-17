@@ -1,4 +1,5 @@
 const { scimagojrScraper } = require("../scraper");
+const clarivateScraper = require("../scraper/clarivateScraper");
 
 const journalData = async (req, resp) => {
   const { journalName, year } = req.params;
