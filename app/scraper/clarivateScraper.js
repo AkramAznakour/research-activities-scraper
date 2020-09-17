@@ -15,7 +15,9 @@ const JOURNAL_BUTTON_SELECTOR_SECOND_PART =
 const EMAIL_INPUT_SELECTOR = "#mat-input-0";
 const PASSWORD_INPUT_SELECTOR = "#mat-input-1";
 const CLARIVATE_ACCOUNT_EMAIL = process.env.CLARIVATE_ACCOUNT_EMAIL;
+console.log(CLARIVATE_ACCOUNT_EMAIL);
 const CLARIVATE_ACCOUNT_PASSWORD = process.env.CLARIVATE_ACCOUNT_PASSWORD;
+console.log(CLARIVATE_ACCOUNT_PASSWORD);
 const LOGIN_BUTTON_SELECTOR =
   "body > microui-app > section > microui-base > div:nth-child(1) > div > base-login > div > div.login-body.login-widget > div:nth-child(1) > login > steam-login > form > div:nth-child(4) > div:nth-child(2) > button";
 const SEARCH_INPUT_SELECTOR = "#search-box";
