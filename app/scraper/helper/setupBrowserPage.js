@@ -19,15 +19,11 @@ const allRequestsTypes = [
 ];
 
 const setupBrowserPage = async ({ allowedRequests, useNativePuppeteer }) => {
-  const browser = useNativePuppeteer && useNativePuppeteer === true
-      ? await nativePuppeteer.launch({
-          args: ["--no-sandbox"],
-          headless: true,
-        })
-      : await puppeteer.launch({
-          args: ["--no-sandbox"],
-          headless: true,
-        });
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox"],
+    headless: true,
+  });
+
 
   const page = await browser.newPage();
   await page.setRequestInterception(true);
