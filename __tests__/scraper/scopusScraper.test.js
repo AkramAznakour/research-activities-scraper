@@ -159,4 +159,46 @@ describe("Scopus scraper", () => {
       );
     }
   }, 100000);
+
+  it("should be able to search for authors", async () => {
+    const search = {
+      authorName: "lachgar mohamed",
+      authors: [
+        {
+          authorId: "56515263800",
+          name: "Lachgar, Mohamed",
+          documents: "8",
+          hIndex: "3",
+          affiliation: "Ecole Nationale des Sciences Appliquées d’El Jadida",
+          city: "El Jadida",
+          territory: "Morocco",
+          profilePicture: "",
+          interests: [],
+          link:
+            "https://www.scopus.com/inward/authorDetails.uri?authorID=56515263800&partnerID=5ESL7QZV&md5=71eab9b82408d97500b59dfc4a28412c",
+          platform: "scopus",
+        },
+        {
+          authorId: "6507107044",
+          name: "Lachgar, Mohamed",
+          documents: "5",
+          hIndex: "4",
+          affiliation: "Faculté des Sciences, El Jadida",
+          city: "El Jadida",
+          territory: "Morocco",
+          profilePicture: "",
+          interests: [],
+          link:
+            "https://www.scopus.com/inward/authorDetails.uri?authorID=6507107044&partnerID=5ESL7QZV&md5=3e404f82ecbc323d768f066361540fde",
+          platform: "scopus",
+        },
+      ],
+    };
+
+    const result = await scopusScraper.authorSearch({
+      authorName: search.authorName,
+    });
+
+    expect(result.authors.length).toBe(search.authors.length);
+  }, 100000);
 });
