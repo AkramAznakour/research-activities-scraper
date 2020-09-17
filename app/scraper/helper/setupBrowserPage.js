@@ -38,7 +38,8 @@ const setupBrowserPage = async ({ allowedRequests, useNativePuppeteer }) => {
   )
     page.on("console", (msg) => console.log(msg._text));
 
-  page.setViewport({ width: "1200", height: "1000" });
+  if (useNativePuppeteer && useNativePuppeteer === true )
+    page.setViewport({ width: "1200", height: "1000" });
 
   await page.evaluateOnNewDocument(() => {
     const newProto = navigator.__proto__;
