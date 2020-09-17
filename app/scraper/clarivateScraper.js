@@ -136,7 +136,7 @@ const journalData = async ({ journalName, year }) => {
     await page.hover(JOURNAL_BUTTON_SELECTOR);
     await page.click(JOURNAL_BUTTON_SELECTOR);
 
-    await page.waitForSelector(IF_VALUE_SPAN_SELECTOR);
+    await page.waitForSelector(IF_VALUE_SPAN_SELECTOR, { timeout: 3000 });
 
     const element = await page.$(IF_VALUE_SPAN_SELECTOR);
 
