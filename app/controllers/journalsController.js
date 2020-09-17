@@ -19,9 +19,12 @@ const journalData = async (req, resp) => {
     year,
   });
 
-  if (scimagojrResult.journal || clarivateResult.journal)
+  if (scimagojrResult.journal.SJR || clarivateResult.journal.IF)
     resp.send({
-      journal: { ...scimagojrResult.journal, ...clarivateResult.journal },
+      journal: {
+        SJR: scimagojrResult.journal.SJR ? scimagojrResult.journal.SJR : "",
+        IF: clarivateResult.journal.IF ? clarivateResult.journal.IF : "",
+      },
     });
   else if (journal.error) {
     resp.status(200).send({ error: journal.error });
