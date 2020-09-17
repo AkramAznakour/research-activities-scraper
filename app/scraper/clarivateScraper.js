@@ -65,18 +65,6 @@ const journalData = async ({ journalName, year }) => {
   });
 
   try {
-    const previousSession = fs.existsSync(COOKIES_FILE_PATH);
-    if (previousSession) {
-      // If file exist load the cookies
-      const cookiesArr = require("../../cookiesObject.json");
-      if (cookiesArr.length !== 0) {
-        for (let cookie of cookiesArr) {
-          await page.setCookie(cookie);
-        }
-        console.log("Session has been loaded in the browser");
-      }
-    }
-
     await page.goto(CLARIVATE_LOGIN_URL, DIRECT_NAVIGATION_OPTIONS);
 
     await autoScroll(page);
@@ -148,24 +136,11 @@ const journalData = async ({ journalName, year }) => {
     await page.hover(JOURNAL_BUTTON_SELECTOR);
     await page.click(JOURNAL_BUTTON_SELECTOR);
 
-    await page.waitForSelector(IF_VALUE_SPAN_SELECTOR);
+    await page.waitForSelector(IF_VALUE_SPAN_SELECTOR, { timeout: 3000 });
 
     const element = await page.$(IF_VALUE_SPAN_SELECTOR);
 
     const IF = await page.evaluate((element) => element.textContent, element);
-
-    const cookiesObject = await page.cookies();
-    jsonfile.writeFile(
-      COOKIES_FILE_PATH,
-      cookiesObject,
-      { spaces: 2 },
-      function (err) {
-        if (err) {
-          console.log(WRITE_COOKIES_OBJECT_ERROR_MESSAGE, err);
-        }
-        console.log(WRITE_COOKIES_OBJECT_SUCCESS_MESSAGE);
-      }
-    );
 
     return { journal: { IF } };
   } catch (error) {
