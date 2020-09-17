@@ -1,4 +1,5 @@
 const { scimagojrScraper } = require("../scraper");
+const clarivateScraper = require("../scraper/clarivateScraper");
 
 const journalData = async (req, resp) => {
   const { journalName, year } = req.params;
@@ -7,12 +8,21 @@ const journalData = async (req, resp) => {
     resp.status(200).send({ error: "No journal name" });
     return;
   }
-  const journal = await scimagojrScraper.journalData({
+  
+  const scimagojrResult = await scimagojrScraper.journalData({
     journalName,
     year,
   });
 
-  if (journal.journal) resp.send({ journal: journal.journal });
+  const clarivateResult = await clarivateScraper.journalData({
+    journalName,
+    year,
+  });
+
+  if (scimagojrResult.journal || clarivateResult.journal)
+    resp.send({
+      journal: { ...scimagojrResult.journal, ...clarivateResult.journal },
+    });
   else if (journal.error) {
     resp.status(200).send({ error: journal.error });
   } else {

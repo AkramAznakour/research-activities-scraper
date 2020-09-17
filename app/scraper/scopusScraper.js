@@ -65,7 +65,7 @@ const authorSearch = async ({ authorName }) => {
     }
 
     await page.waitForSelector("#srchResultsList", {
-      timeout: 1000,
+      timeout: 2000,
     });
 
     if (process.env.DEBUG == "true") {

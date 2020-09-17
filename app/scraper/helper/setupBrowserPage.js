@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer-extra");
+const nativePuppeteer = require("puppeteer");
 
 puppeteer.use(require("puppeteer-extra-plugin-stealth")());
 
@@ -17,11 +18,16 @@ const allRequestsTypes = [
   "other",
 ];
 
-const setupBrowserPage = async ({ allowedRequests }) => {
-  const browser = await puppeteer.launch({
-    args: ["--no-sandbox"],
-    headless: true,
-  });
+const setupBrowserPage = async ({ allowedRequests, useNativePuppeteer }) => {
+  const browser = useNativePuppeteer && useNativePuppeteer === true
+      ? await nativePuppeteer.launch({
+          args: ["--no-sandbox"],
+          headless: true,
+        })
+      : await puppeteer.launch({
+          args: ["--no-sandbox"],
+          headless: true,
+        });
 
   const page = await browser.newPage();
   await page.setRequestInterception(true);

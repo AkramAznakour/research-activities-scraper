@@ -1,0 +1,68 @@
+[
+  {
+    "name": "_sp_id.2f26",
+    "value": "c31995b8-d14c-429e-a82e-7dc020b6e0b1.1600334375.1.1600334406.1600334375.3bbd32d1-0128-4a83-a267-ed453120284e",
+    "domain": ".clarivate.com",
+    "path": "/",
+    "expires": 1663406406,
+    "size": 119,
+    "httpOnly": false,
+    "secure": false,
+    "session": false
+  },
+  {
+    "name": "_sp_ses.2f26",
+    "value": "*",
+    "domain": ".clarivate.com",
+    "path": "/",
+    "expires": 1600336206,
+    "size": 13,
+    "httpOnly": false,
+    "secure": false,
+    "session": false
+  },
+  {
+    "name": "_gat_UA-34947514-34",
+    "value": "1",
+    "domain": ".clarivate.com",
+    "path": "/",
+    "expires": 1600334434,
+    "size": 20,
+    "httpOnly": false,
+    "secure": false,
+    "session": false
+  },
+  {
+    "name": "_gid",
+    "value": "GA1.2.1269095968.1600334374",
+    "domain": ".clarivate.com",
+    "path": "/",
+    "expires": 1600420806,
+    "size": 31,
+    "httpOnly": false,
+    "secure": false,
+    "session": false
+  },
+  {
+    "name": "_fbp",
+    "value": "fb.1.1600334375278.2125860518",
+    "domain": ".clarivate.com",
+    "path": "/",
+    "expires": 1608110405,
+    "size": 33,
+    "httpOnly": false,
+    "secure": false,
+    "session": false
+  },
+  {
+    "name": "_ga",
+    "value": "GA1.2.991832284.1600334374",
+    "domain": ".clarivate.com",
+    "path": "/",
+    "expires": 1663406406,
+    "size": 29,
+    "httpOnly": false,
+    "secure": false,
+    "session": false
+  }
+]
