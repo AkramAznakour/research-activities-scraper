@@ -1,11 +1,7 @@
-const jsonfile = require("jsonfile");
-const fs = require("fs");
-
 const { performanceWrapping } = require("./helper/performanceWrapping");
 const { setupBrowserPage } = require("./helper/setupBrowserPage");
-const { EROFS } = require("constants");
 
-const GREENSCI_SEARCH_URL = "https://www.greensci.net/search?";
+const GREENSCI_SEARCH_URL = "http://www.greensci.net/search?";
 
 const DIRECT_NAVIGATION_OPTIONS = {
   waitUntil: "load",
@@ -53,10 +49,8 @@ const journalData = async ({ journalName, year }) => {
 
     return { journal: { IF } };
   } catch (error) {
-    console.error(error);
     return { journal: { error } };
   } finally {
-    await page.close();
     await browser.close();
   }
 };

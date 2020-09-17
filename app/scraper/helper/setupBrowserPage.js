@@ -32,11 +32,6 @@ const setupBrowserPage = async ({ allowedRequests, useNativePuppeteer }) => {
   const page = await browser.newPage();
   await page.setRequestInterception(true);
 
-  if (
-    process.env.PERFORMANCE_WRAPPING ||
-    process.env.PERFORMANCE_WRAPPING == "true"
-  )
-    page.on("console", (msg) => console.log(msg._text));
 
   if (useNativePuppeteer && useNativePuppeteer === true )
     page.setViewport({ width: "1200", height: "1000" });

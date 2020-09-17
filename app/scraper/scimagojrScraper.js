@@ -25,15 +25,6 @@ const journalData = async ({ journalName, year }) => {
       DIRECT_NAVIGATION_OPTIONS
     );
 
-    if (process.env.DEBUG == "true") {
-      const fileName = Date.now() + ".png";
-      console.log("screenshot : ", fileName);
-      await page.screenshot({
-        path: "./public/screenshots/" + fileName,
-        fullPage: true,
-      });
-    }
-
     const matchingJournal = await page.evaluate(
       async (journalName, POSSIBLE_JOURNALS_SELECTOR) => {
         const trimJournalName = ({ journalName }) =>
@@ -64,7 +55,7 @@ const journalData = async ({ journalName, year }) => {
       POSSIBLE_JOURNALS_SELECTOR
     );
 
-    if (matchingJournal.link)
+    if (matchingJournal && matchingJournal.link)
       await page.goto(matchingJournal.link, DIRECT_NAVIGATION_OPTIONS);
     else return { error: matchingJournal };
 
@@ -103,7 +94,6 @@ const journalData = async ({ journalName, year }) => {
 
     return { journal: { SJR } };
   } catch (error) {
-    console.error(error);
     return { error };
   } finally {
     await page.close();
