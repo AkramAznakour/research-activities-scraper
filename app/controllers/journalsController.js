@@ -1,5 +1,4 @@
-const { scimagojrScraper } = require("../scraper");
-const greensciScraper = require("../scraper/greensciScraper");
+const { scimagojrScraper, greensciScraper } = require("../scraper");
 
 const journalData = async (req, resp) => {
   const { journalName, year } = req.params;

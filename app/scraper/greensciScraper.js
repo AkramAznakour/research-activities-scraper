@@ -1,9 +1,5 @@
-const jsonfile = require("jsonfile");
-const fs = require("fs");
-
 const { performanceWrapping } = require("./helper/performanceWrapping");
 const { setupBrowserPage } = require("./helper/setupBrowserPage");
-const { EROFS } = require("constants");
 
 const GREENSCI_SEARCH_URL = "https://www.greensci.net/search?";
 
