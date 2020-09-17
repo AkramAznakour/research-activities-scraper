@@ -55,7 +55,7 @@ const journalData = async ({ journalName, year }) => {
       POSSIBLE_JOURNALS_SELECTOR
     );
 
-    if (matchingJournal.link)
+    if (matchingJournal && matchingJournal.link)
       await page.goto(matchingJournal.link, DIRECT_NAVIGATION_OPTIONS);
     else return { error: matchingJournal };
 
