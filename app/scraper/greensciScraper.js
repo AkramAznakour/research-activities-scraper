@@ -1,7 +1,7 @@
 const { performanceWrapping } = require("./helper/performanceWrapping");
 const { setupBrowserPage } = require("./helper/setupBrowserPage");
 
-const GREENSCI_SEARCH_URL = "https://www.greensci.net/search?";
+const GREENSCI_SEARCH_URL = "http://www.greensci.net/search?";
 
 const DIRECT_NAVIGATION_OPTIONS = {
   waitUntil: "load",
