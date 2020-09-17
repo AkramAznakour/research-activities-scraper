@@ -13,20 +13,27 @@ const journalData = async (req, resp) => {
     year,
   });
 
-  const clarivateResult = await greensciScraper.journalData({
+  const greensciResult = await greensciScraper.journalData({
     journalName,
     year,
   });
 
-  if (scimagojrResult.journal.SJR || clarivateResult.journal.IF)
+  if (
+    (scimagojrResult.journal && scimagojrResult.journal.SJR) ||
+    (greensciResult.journal && greensciResult.journal.IF)
+  )
     resp.send({
       journal: {
         SJR: scimagojrResult.journal.SJR ? scimagojrResult.journal.SJR : "",
-        IF: clarivateResult.journal.IF ? clarivateResult.journal.IF : "",
+        IF: greensciResult.journal.IF ? greensciResult.journal.IF : "",
       },
     });
-  else if (journal.error) {
-    resp.status(200).send({ error: journal.error });
+  else if (greensciResult.journal.error) {
+    resp
+      .status(200)
+      .send({
+        error: { ...scimagojrResult.journal, ...greensciResult.journal },
+      });
   } else {
     resp.status(500).send({ error: "Unhandled error" });
   }
