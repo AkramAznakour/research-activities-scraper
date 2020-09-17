@@ -94,7 +94,6 @@ const journalData = async ({ journalName, year }) => {
 
     return { journal: { SJR } };
   } catch (error) {
-    console.error(error);
     return { error };
   } finally {
     await page.close();
