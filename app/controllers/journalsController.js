@@ -24,8 +24,14 @@ const journalData = async (req, resp) => {
   )
     resp.send({
       journal: {
-        SJR: scimagojrResult.journal.SJR ? scimagojrResult.journal.SJR : "",
-        IF: greensciResult.journal.IF ? greensciResult.journal.IF : "",
+        SJR:
+          scimagojrResult.journal && scimagojrResult.journal.SJR
+            ? scimagojrResult.journal.SJR
+            : "",
+        IF:
+          greensciResult.journal && greensciResult.journal.IF
+            ? greensciResult.journal.IF
+            : "",
       },
     });
   else if (greensciResult.journal.error) {
