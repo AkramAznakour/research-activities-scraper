@@ -196,17 +196,17 @@ const authorData = async ({ authorId }) => {
       const indexes = [
         {
           name: "citations",
-          total: document.querySelector("#totalCiteCount").textContent,
-          lastFiveYears: citationsPerYear.reduce(
-            (a, b) => a + parseInt(b["citations"] || 0),
-            0
-          ),
+          total: indexesCitations ? indexesCitations.textContent : "",
+          lastFiveYears: indexesCitations
+            ? citationsPerYear.reduce(
+                (a, b) => a + parseInt(b["citations"] || 0),
+                0
+              )
+            : 0,
         },
         {
           name: "h-index",
-          total: document.querySelector(
-            "#authorDetailsHindex > div.panel-body > div > span"
-          ).textContent,
+          total: indexesCitations ? indexesCitations.textContent : "",
           lastFiveYears: "",
         },
       ];
