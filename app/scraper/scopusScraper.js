@@ -192,7 +192,7 @@ const authorData = async ({ authorId }) => {
         ).map((a) => ({ year: a[1], citations: a[2] }));
 
       const indexesCitations = document.querySelector("#totalCiteCount");
-      const indexesHIndex = document.querySelector("#totalCiteCount");
+      const indexesHIndex = document.querySelector("#authorDetailsHindex > div.panel-body > div > span");
       const indexes = [
         {
           name: "citations",
