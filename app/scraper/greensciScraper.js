@@ -36,8 +36,12 @@ const journalData = async ({ journalName, year }) => {
 
     if (matchingJournals.length === 0) throw new Error("no matching journals");
 
+    const trimJournalName = (journalName) =>
+      journalName.toLowerCase().replace(/[-_: #]/g, "");
+
     const ExactNameJournals = matchingJournals.filter(
-      (journal) => journal.name.toLowerCase() === journalName.toLowerCase()
+      (journal) =>
+        trimJournalName(journal.name) === trimJournalName(journalName)
     );
 
     if (ExactNameJournals.length == 0)
