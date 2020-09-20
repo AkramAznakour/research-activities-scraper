@@ -206,7 +206,7 @@ const authorData = async ({ authorId }) => {
         },
         {
           name: "h-index",
-          total: indexesHIndex ? indexesHIndex.textContent : "",
+          total: indexesCitations ? indexesCitations.textContent : "",
           lastFiveYears: "",
         },
       ];
