@@ -15,15 +15,18 @@ describe("should be able to fetch journal impact factor from clarivate", () => {
     expect(result.journal.IF).toBe(search.IF);
   }, 100000);
 
-  it("should return null incase of no data ", async () => {
+  it("Should skip special characters", async () => {
     const search = {
-      journalName: "Communications in Computer and Information Science",
+      journalName:
+        "International Journal of Industrial Engineering : Theory Applications and Practice",
       year: "2018",
+      IF: "0.532",
     };
 
     const result = await greensciScraper.journalData({
       ...search,
     });
-    expect(result.journal.IF).toBe(undefined);
+
+    expect(result.journal.IF).toBe(search.IF);
   }, 100000);
 });
