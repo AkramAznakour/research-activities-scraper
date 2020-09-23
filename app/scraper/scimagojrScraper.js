@@ -28,7 +28,7 @@ const journalData = async ({ journalName, year }) => {
     const matchingJournal = await page.evaluate(
       async (journalName, POSSIBLE_JOURNALS_SELECTOR) => {
         const trimJournalName = ({ journalName }) =>
-          journalName.toLowerCase().replace(/[-_: #]/g, "");
+          journalName.toLowerCase().replace(/[-_: #]/g, "").replace("&","and");
         try {
           const possibleJournals = [
             ...document.querySelectorAll(POSSIBLE_JOURNALS_SELECTOR),
