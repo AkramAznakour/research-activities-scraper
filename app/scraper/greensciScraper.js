@@ -47,9 +47,21 @@ const journalData = async ({ journalName, year }) => {
     if (ExactNameJournals.length == 0)
       throw new Error("journal not in  matching journals");
 
-    const journal = ExactNameJournals[0];
+    const IFS = Object.keys(ExactNameJournals[0])
+      .filter((a) => /^[0-9]/.test(a))
+      .map((y) => ({
+        year: y,
+        IF: ExactNameJournals[0][y],
+      }))
+      .filter((a) => a.IF.trim() !== "")
+      .sort((a, b) => (parseInt(a.year) < parseInt(b.year) ? 1 : -1))
+      .sort(
+        (a, b) =>
+          Math.abs(parseInt(a.year) - parseInt(year)) -
+          Math.abs(parseInt(b.year) - parseInt(year))
+      );
 
-    const IF = journal[year];
+    const IF = IFS[0].IF;
 
     return { journal: { IF } };
   } catch (error) {
