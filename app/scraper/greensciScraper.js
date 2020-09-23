@@ -14,8 +14,16 @@ const journalData = async ({ journalName, year }) => {
   });
 
   try {
+    const splits = journalName.split(/[&]|and/);
+    const query =
+      splits.length == 1
+        ? splits[0]
+        : splits[0].length > splits[1].length
+        ? splits[0]
+        : splits[1];
+
     await page.goto(
-      GREENSCI_SEARCH_URL + "kw=" + journalName,
+      GREENSCI_SEARCH_URL + "kw=" + query,
       DIRECT_NAVIGATION_OPTIONS
     );
 
