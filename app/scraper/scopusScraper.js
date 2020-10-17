@@ -130,7 +130,7 @@ const authorSearch = async ({ authorName }) => {
 
 const authorData = async ({ authorId }) => {
   const { browser, page } = await setupBrowserPage({
-    allowedRequests: ["xhr", "script", "fetch"],
+    allowedRequests: ["xhr", "script"],
   });
 
   try {
