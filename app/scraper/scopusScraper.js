@@ -130,7 +130,7 @@ const authorSearch = async ({ authorName }) => {
 
 const authorData = async ({ authorId }) => {
   const { browser, page } = await setupBrowserPage({
-    allowedRequests: ["xhr", "script", "fetch"],
+    allowedRequests: ["xhr", "script"],
   });
 
   try {
@@ -151,52 +151,65 @@ const authorData = async ({ authorId }) => {
     await page.waitForSelector(".highcharts-root path");
 
     let author = await page.evaluate(() => {
-      const infosHtml = document.querySelector(".authInfoSection");
-      const name = infosHtml.querySelector("h2").textContent.replace(",", "");
-      const university = infosHtml
-        .querySelector("#affilCountryText li")
-        .innerText.replace("View more", "")
+      const name = document
+        .querySelector("#author-general-details > div > h2")
+        .textContent.replace(",", "")
         .trim();
 
-      const interests = [
-        ...infosHtml.querySelectorAll("#subjectAreaBadges span"),
-      ]
-        .map((i) => i.textContent)
-        .map((i) => i.trim())
-        .filter((i) => i !== "")
-        .filter((i) => !i.toLowerCase().includes("view all"));
-      const publications = [
-        ...document.querySelectorAll("#srchResultsList tr "),
-      ]
-        .map((tr) =>
-          [...tr.querySelectorAll("td")].map((span) => span.textContent.trim())
+      const university = document
+        .querySelector(
+          "#scopus-institution-name-link__institution-link > span.link__text"
         )
-        .filter((sections) => sections.length > 2)
-        .map((publication) => ({
-          title: publication[0] ? publication[0].replace(/\n/g, "") : null,
-          source: publication[3] ? publication[3].split("\n")[0] : null,
-          citation: publication[4],
-          year: publication[2],
-          authors: publication[1].match(/[^,]+,[^,]+/g),
-        }))
-        .filter(({ title }) => title);
+        .textContent.trim();
 
-      const citationsPerYear = [
-        ...document.querySelectorAll(".highcharts-root path"),
+      const interests = [
+        ...document.querySelectorAll(
+          ".button__text.text-bold.text--alight-left"
+        ),
       ]
-        .filter((a) => a.attributes["aria-label"])
-        .map((a) =>
-          a.attributes["aria-label"].textContent
-            .split(/[ ,]+/)
-            .map((a) => a.replace(".", ""))
-        ).map((a) => ({ year: a[1], citations: a[2] }));
+        .flatMap((a) => a.textContent.split(";"))
+        .map((a) => a.trim());
 
-      const indexesCitations = document.querySelector("#totalCiteCount");
-      const indexesHIndex = document.querySelector("#authorDetailsHindex > div.panel-body > div > span");
+      const publications = [
+        ...document.querySelectorAll(
+          "#scopus-author-profile-page-control-microui__documents-panel div.col-18.article--results > els-results-view > els-results-view-list > ul > li> div"
+        ),
+      ]
+        .map((a) => ({
+          title: a.querySelector("h5").textContent.trim(),
+          authors: [
+            ...a.querySelectorAll("scopus-author-name-link a span"),
+          ].map((b) => b.textContent.trim()),
+          citations: a
+            .querySelector(".col-2")
+            .textContent.replace("Cited by", "")
+            .replace("this link is disabled", "")
+            .trim(),
+          year: a
+            .querySelector(".col-19 > div.text-width-34 > span:nth-child(2)")
+            .textContent.trim(),
+          source: a
+            .querySelector(
+              ".col-19 > div.text-width-34 > span.text-meta.text-bold.text-italic"
+            )
+            .textContent.trim(),
+        }))
+        .map((publication, index) => ({ index, ...publication }));
+
+      const citationsPerYear = [];
+
+      const indexesCitations = document.querySelector(
+        "#scopus-author-profile-page-control-microui__ScopusAuthorProfilePageControlMicroui > div:nth-child(2) > div > micro-ui > scopus-author-details > section > div > div.col-lg-6.col-24 > section > div:nth-child(2) > h3"
+      );
+
+      const indexesHIndex = document.querySelector(
+        "#scopus-author-profile-page-control-microui__ScopusAuthorProfilePageControlMicroui > div:nth-child(2) > div > micro-ui > scopus-author-details > section > div > div.col-lg-6.col-24 > section > div:nth-child(3) > h3"
+      );
+
       const indexes = [
         {
           name: "citations",
-          total: indexesCitations ? indexesCitations.textContent : "",
+          total: indexesCitations ? indexesCitations.textContent.trim() : "",
           lastFiveYears: indexesCitations
             ? citationsPerYear.reduce(
                 (a, b) => a + parseInt(b["citations"] || 0),
@@ -206,7 +219,7 @@ const authorData = async ({ authorId }) => {
         },
         {
           name: "h-index",
-          total: indexesHIndex ? indexesHIndex.textContent : "",
+          total: indexesHIndex ? indexesHIndex.textContent.trim() : "",
           lastFiveYears: "",
         },
       ];
