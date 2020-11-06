@@ -158,7 +158,7 @@ const authorData = async ({ authorId }) => {
 
       const university = document
         .querySelector(
-          "#scopus-institution-name-link__institution-link > span.link__text"
+          "scopus-institution-name-link"
         )
         .textContent.trim();
 
