@@ -180,7 +180,7 @@ const authorData = async ({ authorId }) => {
           authors: [
             ...a.querySelectorAll("scopus-author-name-link a span"),
           ].map((b) => b.textContent.trim()),
-          citations: a
+          citation: a
             .querySelector(".col-2")
             .textContent.replace("Cited by", "")
             .replace("this link is disabled", "")
