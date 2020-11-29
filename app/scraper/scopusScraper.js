@@ -157,10 +157,9 @@ const authorData = async ({ authorId }) => {
         .trim();
 
       const university = document
-        .querySelector(
-          "scopus-institution-name-link"
-        )
-        .textContent.trim();
+        .querySelector("scopus-institution-name-link")
+        .textContent.trim()
+        .replace("disabled", "");
 
       const interests = [
         ...document.querySelectorAll(
