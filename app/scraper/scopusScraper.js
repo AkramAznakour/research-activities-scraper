@@ -171,7 +171,7 @@ const authorData = async ({ authorId }) => {
 
       const publications = [
         ...document.querySelectorAll(
-          "#scopus-author-profile-page-control-microui__documents-panel div.col-18.article--results > els-results-view > els-results-view-list > ul > li> div"
+          "#scopus-author-profile-page-control-microui__documents-panel div.col-18.article--results els-results-view > els-results-view-list > ul > li> div"
         ),
       ]
         .map((a) => ({
